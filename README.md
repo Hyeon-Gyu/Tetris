@@ -1,2 +1,2 @@
 # Tetris
-make tetris console game using react/spring boot &amp;&amp;  only typescript
+making tetris console game on react/spring boot version and only typescript version
