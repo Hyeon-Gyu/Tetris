@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    hikari:
+      connection-timeout: 60000
+      maximum-pool-size: 200
+      minimum-idle: 30
+      idle-timeout: 3000
+      pool-name: HikariCP
+      type: com.zaxxer.hikari.HikariDataSource
+      jdbc-url: jdbc:mysql://localhost:3306/gyu?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
+      username: root
+      password: "root"
+      driver-class-name: com.mysql.cj.jdbc.Driver
