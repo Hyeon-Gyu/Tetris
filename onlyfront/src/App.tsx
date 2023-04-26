@@ -1,206 +1,118 @@
-//import React from 'react';
-//import logo from './logo.svg';
-import './App.css';
-import {Tetris, TetrisState} from './Tetris';
-//import Matrix from './Matrix';
-import React, {  useState } from 'react';
+import {TetrisState} from './Tetris';
+import React, {  useState, useEffect } from 'react';
 import { CTetris } from './CTetris';
-//입력 받는 getkey는 여기에 있어야 실행이 된다.
-//프론트에는 input 박스 하나만 만들어놓고 콘솔에 찍자.
+import { setOfBlockArrays } from './setOfBlockArrays';
+import "./screen.css";
 
-let setOfBlockArrays:number[][][][] = [
-  [
-    [
-      [1, 1],
-      [1, 1]
-    ],
-    [
-      [1, 1],
-      [1, 1]
-    ],
-    [
-      [1, 1],
-      [1, 1]
-    ],
-    [
-      [1, 1],
-      [1, 1]
-    ],
-  ],
-  [
-    [
-      [0, 1, 0],
-      [1, 1, 1],
-      [0, 0, 0]
-    ],
-    [
-      [0, 1, 0],
-      [0, 1, 1],
-      [0, 1, 0]
-    ],
-    [
-      [0, 0, 0],
-      [1, 1, 1],
-      [0, 1, 0]
-    ],
-    [
-      [0, 1, 0],
-      [1, 1, 0],
-      [0, 1, 0]
-    ]
-  ],
-  [
-    [
-      [1, 0, 0],
-      [1, 1, 1],
-      [0, 0, 0]
-    ],
-    [
-      [0, 1, 1],
-      [0, 1, 0],
-      [0, 1, 0]
-    ],
-    [
-      [0, 0, 0],
-      [1, 1, 1],
-      [0, 0, 1]
-    ],
-    [
-      [0, 1, 0],
-      [0, 1, 0],
-      [1, 1, 0]
-    ]
-  ],
-  [
-    [
-      [0, 0, 1],
-      [1, 1, 1],
-      [0, 0, 0]
-    ],
-    [
-      [0, 1, 0],
-      [0, 1, 0],
-      [0, 1, 1]
-    ],
-    [
-      [0, 0, 0],
-      [1, 1, 1],
-      [1, 0, 0]
-    ],
-    [
-      [1, 1, 0],
-      [0, 1, 0],
-      [0, 1, 0]
-    ]
-  ],
-  [
-    [
-      [0, 1, 0],
-      [1, 1, 0],
-      [1, 0, 0]
-    ],
-    [
-      [1, 1, 0],
-      [0, 1, 1],
-      [0, 0, 0]
-    ],
-    [
-      [0, 1, 0],
-      [1, 1, 0],
-      [1, 0, 0]
-    ],
-    [
-      [1, 1, 0],
-      [0, 1, 1],
-      [0, 0, 0]
-    ]
-  ],
-  [
-    [
-      [0, 1, 0],
-      [0, 1, 1],
-      [0, 0, 1]
-    ],
-    [
-      [0, 0, 0],
-      [0, 1, 1],
-      [1, 1, 0],
-    ],
-    [
-      [0, 1, 0],
-      [0, 1, 1],
-      [0, 0, 1],
-    ],
-    [
-      [0, 0, 0],
-      [0, 1, 1],
-      [1, 1, 0],
-    ]  
-  ],
-  [
-    [
-      [0, 0, 0, 0],
-      [1, 1, 1, 1],
-      [0, 0, 0, 0],
-      [0, 0, 0, 0],
-    ],
-    [
-      [0, 1, 0, 0],
-      [0, 1, 0, 0],
-      [0, 1, 0, 0],
-      [0, 1, 0, 0],
-    ],
-    [
-      [0, 0, 0, 0],
-      [1, 1, 1, 1],
-      [0, 0, 0, 0],
-      [0, 0, 0, 0],
-    ],
-    [
-      [0, 1, 0, 0],
-      [0, 1, 0, 0],
-      [0, 1, 0, 0],
-      [0, 1, 0, 0],
-    ]
-  ]
-]
 
+
+function Name(props: any) {
+  return (
+      <div className="name">
+          <h1>2인용 컬러 테트리스</h1>
+      </div>
+  )
+}
+
+function OppositeScreen(props: any) {
+  return (
+      <div className="OppositeScreen">
+          <h1>상대 테트리스</h1>
+      </div>
+  )
+}
+
+
+function printColor(value:number){
+  switch(value){
+      case 1:
+          return 'black';
+      case 0:
+          return 'white';
+      case 10:
+          return 'pink';
+      case 20:
+          return 'green';
+      case 30:
+          return 'yellow';
+      case 40:
+          return 'red';
+      case 50:
+          return 'blue';
+      case 60:
+          return 'purple';
+      case 70:
+          return 'brown';
+      }
+}
 
 let state:TetrisState = TetrisState.BeforeStart;
-Tetris.init(setOfBlockArrays);
-let board:Tetris = new CTetris(15,10);
+CTetris.init(setOfBlockArrays);
+let board:CTetris= new CTetris(15,10);
 let random:number= Math.floor(Math.random() * 7);
 state = board.accept(random.toString());
-board.printScreen();
+board.printScreen()
+
 
 function App() {
-  const [showInput, setShowInput] = useState(true);
-  const handleKeyDown = (event:React.KeyboardEvent<HTMLInputElement>) => {
-    let key = event.key;
-    if(key === "q"){
-      console.log("game quit");
-      alert("game quit")
-      setShowInput(false);
+    const [showInput, setShowInput] = useState(true)
+    const [keyPressed, setKeyPressed] = useState(true)
+    const [screen, setScreen] = useState<number[][]>();
+
+    //setScreen(board.oScreen.get_array)
+
+    const handleKeyDown = (event:React.KeyboardEvent<HTMLInputElement>) => {
+        setKeyPressed(false)
+        let key = event.key
+        console.log(event.key)
+        if(key === "q"){
+          console.log("game quit")
+          alert("game quit")
+          setShowInput(false)
+        }
+        state = board.accept(key)
+        board.printScreen();
+        setScreen(board.oScreen.get_array())
+        if(state === TetrisState.NewBlock){
+          key = (Math.floor(Math.random() * 7)).toString();
+          state = board.accept(key)
+          board.printScreen()
+          setScreen(board.oScreen.get_array())
+          if(state === TetrisState.Finished){
+            console.log("game over")
+            alert("game over")
+            setShowInput(false)  
+          }
+        }
     }
-    state = board.accept(key);
-    board.printScreen();
-    if(state === TetrisState.NewBlock){
-      key = (Math.floor(Math.random() * 7)).toString();
-      state = board.accept(key);
-      board.printScreen();
-      if(state === TetrisState.Finished){
-        console.log("game over");
-        alert("game over")
-        setShowInput(false);    
-      }
-    }  
-  }
-  return (
-    <div>
-      <h1>tetris</h1>
-      {showInput && <input type = "text" onKeyDown={handleKeyDown}></input>}
-    </div>
-  )
+    
+    return (
+        <>
+            <h1><Name /></h1>
+            {keyPressed && <h1>Press any key to start</h1>}
+            <div className='gamescreen'>
+                <div className='myScreen'>
+                    {screen?.map((row, rowIndex) => (
+                        <div key={rowIndex} style={ {display:'flex'}}>
+                            {row.map( (col,colIndex) =>( 
+                                <div key = {`${colIndex}-${rowIndex}`}
+                                    className='block' 
+                                    style={ {backgroundColor: printColor(col)}}
+                            />
+                            ))}    
+                        </div>
+                    ))}   
+                </div>
+                <div className='inputbox'>
+                    {showInput && <input className='typing' type="text" onKeyDown={(event) => handleKeyDown(event)} />}
+                </div>
+                <div>
+                    <OppositeScreen />
+                </div>
+            </div>
+        </>
+    )
+
 }
 
 

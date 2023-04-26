@@ -2,7 +2,6 @@
 import Matrix from './Matrix';
 
 
-
 export enum TetrisState {
     Running = 0,
     NewBlock = 1,
@@ -15,8 +14,8 @@ export class Tetris {
     static nBlockTypes = 0;
     static nBlockDegrees = 0;
     static setOfBlockObjects: Array<Array<Matrix>>;
-    private iScreenDy: number;
-    private iScreenDx: number;
+    iScreenDy: number;
+    iScreenDx: number;
     state: TetrisState;
     top: number = 0;
     left: number = 0;

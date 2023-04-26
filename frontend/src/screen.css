@@ -13,15 +13,18 @@
     height: 800px;
     width: 350px;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     border: 2px solid rgba(29, 177, 15, 0.82);
     margin: 50px;
     padding: 50px;
-
+    
 }
 
 .oppositeScreen{
+    height: 800px;
+    width: 350px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -38,11 +41,6 @@
     height: 50px;
 }
 
-.screen {
-    display: flex;
-
-    
-}
 
 .block {
     width: 10px;
