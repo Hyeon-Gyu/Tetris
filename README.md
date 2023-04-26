@@ -1,2 +1,3 @@
-# Tetris
-making tetris console game on react/spring boot version & only Typescript
+### 3인 대결 테트리스 구현
+23.04.26 1인테트리스 로직 구현(+타이머 기능) & 테트리스 화면 UI 제작 완료  
+
