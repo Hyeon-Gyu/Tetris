@@ -12,7 +12,7 @@ object blockarray {
 
     val arrayB_1 = arrayOf(intArrayOf(0,1,0), intArrayOf(1,1,1), intArrayOf(0,0,0))
     val arrayB_2 = arrayOf(intArrayOf(0,1,0), intArrayOf(0,1,1), intArrayOf(0,1,0))
-    val arrayB_3 = arrayOf(intArrayOf(0,0,0), intArrayOf(1,1,0), intArrayOf(0,1,0))
+    val arrayB_3 = arrayOf(intArrayOf(0,0,0), intArrayOf(1,1,1), intArrayOf(0,1,0))
     val arrayB_4 = arrayOf(intArrayOf(0,1,0), intArrayOf(1,1,0), intArrayOf(0,1,0))
 
     val arrayC_1 = arrayOf(intArrayOf(1,0,0), intArrayOf(1,1,1), intArrayOf(0,0,0))
