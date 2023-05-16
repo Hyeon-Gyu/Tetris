@@ -23,7 +23,8 @@ dependencies {
     testImplementation(kotlin("test"))
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("mysql:mysql-connector-java:8.0.30")
+    implementation("mysql:mysql-connector-java:8.0.32")
+    implementation("org.springframework.boot:spring-boot-starter-websocket")
     //api("org.liquibase:liquibase-core:4.19.0")
     api("org.jetbrains.kotlin:kotlin-reflect:1.8.0")
 }
