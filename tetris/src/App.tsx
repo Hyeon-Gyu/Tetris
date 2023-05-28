@@ -2,7 +2,7 @@ import React, { ChangeEvent } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import Matrix from "./Matrix"
-import { Tetris, TetrisState } from "./Tetris"
+import { Tetris, TetrisState, randnum } from "./Tetris"
 import CTetris from './CTetris';
 import { useState, useEffect } from 'react';
 import { paste } from '@testing-library/user-event/dist/paste';
@@ -366,31 +366,33 @@ function App() {
         const [username, setName] = useState('');
 
         var userkey2:string|undefined;
+        enum MessageType {
+                CHAT, LEAVE, JOIN
+        }
 
         const onChangeKey = (e: React.ChangeEvent<HTMLInputElement>) => {
-                
+                console.log("nownow",cBoard!.idxBlockType!)
                 // console.log(e.target.value)
 
                 console.log("keyIn:" + e.target.value[e.target.value.length - 1])
                 username2=e.target.value[e.target.value.length - 1]
                 if (e.target.value[e.target.value.length - 1] == " ") {
+
+                
+
                         setKey("_")//스페이스바는 백에서 _로 매핑되어 동작
                         detectIncoming()
                 }
                 else {
+
                         setKey(e.target.value[e.target.value.length - 1])
                         detectIncoming()
                 }
         
                 e.preventDefault();
-                var chatMessage = {
-                        sender: username2,
-                        content: userkey2,
-                        key : userkey2,
-                        type: 'CHAT'
-                };
+
                 
-                stompClient!.send("/app/chat.send", {},JSON.stringify(chatMessage))
+
                 // return () => {
                 //         if (socket.readyState === 1) { // <-- This is important
                 //             socket.close();
@@ -409,7 +411,30 @@ function App() {
                         console.log("cBoard.oScreen ;")
                         cBoard.drawMatrix(cBoard.oScreen)
                         // cBoard.oScreen.print()
-                        
+                        if(state == TetrisState.NewBlock){
+
+                                console.log("key to send:", randnum)
+         
+                                var chatMessage = {
+                                        sender: username,
+                                        content: userkey2,
+                                        key : randnum,
+                       
+                                };
+                                
+                                stompClient!.send("/app/chat.send", {},JSON.stringify(chatMessage))
+                        }
+                        else if (state == TetrisState.Running){
+                                console.log("key to send:", userkey)
+                                var chatMessage2 = {
+                                        sender: username,
+                                        content: userkey2,
+                                        key : userkey,
+                       
+                                };
+                                
+                                stompClient!.send("/app/chat.send", {},JSON.stringify(chatMessage2))
+                        }
 
 
                 }
@@ -444,8 +469,9 @@ function App() {
                 
                 var state!: TetrisState;
                 
-                state = cBoard.state
-                console.log(cBoard.idxBlockType)//안됨
+                state = cBoard.accept("asdf")
+                console.log("state:",state)//
+                console.log("randInt:",randnum)
 
                 console.log("cBoard.oScreen ;")
                 cBoard.drawMatrix(cBoard.oScreen)
@@ -480,10 +506,11 @@ function App() {
                 console.log("username to be send:",username2)
                 stompClient!.subscribe('/topic/public',onMessageReceived);
 
+                console.log(randnum)
                 // Tell your username to the server
                 stompClient!.send("/app/chat.register",
                         {},
-                        JSON.stringify({sender: username2, type: 'JOIN'})
+                        JSON.stringify({sender: username2, key:randnum, type: 'JOIN'})
                 )
         }
 

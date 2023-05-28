@@ -3,6 +3,9 @@ import Matrix from "./Matrix"
 export enum TetrisState{
     Running, NewBlock, Finished
 }
+
+export var randnum: number|undefined
+
 export class Tetris{
         static idxBlockType(idxBlockType: any) {
                 throw new Error('Method not implemented.');
@@ -172,6 +175,7 @@ export class Tetris{
         return tempBlk.anyGreaterThan(1);
     }
 
+
     accept(key:string){
         console.log("accept called in collBoard")
         var anyCollision:boolean = false;
@@ -183,6 +187,8 @@ export class Tetris{
             this.state=TetrisState.Running;
 
             const randInt = Math.floor(Math.random() * 8);
+            randnum = randInt;
+
             this.idxBlockType = randInt.toString().charCodeAt(0) - "0".charCodeAt(0);
             this.idxBlockDegree = 0;
             this.currBlk = Tetris.setOfBlockObjects[this.idxBlockType][this.idxBlockDegree];
