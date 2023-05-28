@@ -84,8 +84,8 @@ class ChatController {
                 println()
             }
             TetrisState.NewBlock -> {
-                key = ('0' + random.nextInt(7)).toString()
-                board.state = board.accept(key)
+//                key = chatMessage.key.toString()
+                board.state = board.accept(key!!)
                 board.printScreen()
                 println()
                 if(board.state == TetrisState.Finished){
