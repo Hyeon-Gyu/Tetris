@@ -11,7 +11,6 @@ import org.springframework.messaging.handler.annotation.SendTo
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor
 import org.springframework.stereotype.Controller
 import java.util.*
-import kotlin.collections.HashMap
 
 
 @Controller
@@ -59,7 +58,7 @@ class ChatController {
         var state = board!!.state
         when(state){
             TetrisState.Finished -> {
-                chatMessage.playerBoard = board.oScreen.get_array()
+//                chatMessage.playerBoard = board.oScreen.get_array()
                 print(" $sender board game over")
                 clientTetrisMap[chatMessage.sender!!] = board
                 return chatMessage
@@ -71,7 +70,7 @@ class ChatController {
                     println("boad idcheck$board:")
 
                     board.state = TetrisState.Finished
-                    chatMessage.playerBoard = board.oScreen.get_array()
+//                    chatMessage.playerBoard = board.oScreen.get_array()
                     clientTetrisMap[chatMessage.sender!!] = board
                     return chatMessage
                 }
@@ -87,7 +86,7 @@ class ChatController {
                 board.printScreen()
                 println()
                 if(board.state == TetrisState.Finished){
-                    chatMessage.playerBoard = board.oScreen.get_array()
+//                    chatMessage.playerBoard = board.oScreen.get_array()
                     clientTetrisMap[chatMessage.sender!!] = board
                     return chatMessage
                 }
@@ -97,7 +96,7 @@ class ChatController {
                 return chatMessage
             }
         }
-        chatMessage.playerBoard = board.oScreen.get_array()
+//        chatMessage.playerBoard = board.oScreen.get_array()
         clientTetrisMap[chatMessage.sender!!] = board
         return chatMessage
     }
