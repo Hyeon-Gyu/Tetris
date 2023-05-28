@@ -1,8 +1,6 @@
 package com.example.chat.model
 
 
-import kotlin.jvm.Throws
-
 enum class TetrisState {
     Running, NewBlock, Finished, BeforeStarting;
 }
@@ -166,13 +164,13 @@ open class Tetris {
     }
     //key type char->string?
     @Throws(TetrisException::class)
-    open fun accept(key:Char): TetrisState {
+    open fun accept(key:String): TetrisState {
         var tempBlk: Matrix
         if(state == TetrisState.NewBlock){
             oScreen = deleteFullLines(oScreen, currBlk, top, iScreenDy,iScreenDx, iScreenDw)
             iScreen.paste(oScreen,0,0)
             state = TetrisState.Running
-            idxBlockType = key - '0'
+            idxBlockType = key.first() - '0'
             idxBlockDegree = 0
             currBlk = setOfBlockObjects!![idxBlockType][idxBlockDegree]!!
             top = 0
@@ -188,40 +186,45 @@ open class Tetris {
             }
             return state
         }
-        when(key){
-            'a' -> left--
-            'd' -> left++
-            's' -> {
-                top++
-            }
-            'w' -> {
-                idxBlockDegree = (idxBlockDegree+1)% nBlockDegrees
-                currBlk = setOfBlockObjects!![idxBlockType][idxBlockDegree]
-            }
-            ' ' ->{
-                do {
+        else {
+            when (key) {
+                "a" -> left--
+                "d" -> left++
+                "s" -> {
                     top++
-                    tempBlk = iScreen.clip(top,left,top+currBlk!!.get_dy(), left+currBlk!!.get_dx())
-                    tempBlk = tempBlk.add(currBlk!!)
-                } while (!tempBlk.anyGreaterThan(1))
-            }
-            else -> {
-                println("unknown key")
-                println()
+                }
+
+                "w" -> {
+                    idxBlockDegree = (idxBlockDegree + 1) % nBlockDegrees
+                    currBlk = setOfBlockObjects!![idxBlockType][idxBlockDegree]
+                }
+
+                " " -> {
+                    do {
+                        top++
+                        tempBlk = iScreen.clip(top, left, top + currBlk!!.get_dy(), left + currBlk!!.get_dx())
+                        tempBlk = tempBlk.add(currBlk!!)
+                    } while (!tempBlk.anyGreaterThan(1))
+                }
+
+                else -> {
+                    println("unknown key")
+                    println()
+                }
             }
         }
         tempBlk = iScreen.clip(top,left,top+currBlk!!.get_dy(), left+currBlk!!.get_dx())
         tempBlk = tempBlk.add(currBlk!!)
         if(tempBlk.anyGreaterThan(1)){
             when(key){
-                'a' -> left++
-                'd' -> left--
-                's' -> {top--; state = TetrisState.NewBlock;}
-                'w' ->{
+                "a" -> left++
+                "d" -> left--
+                "s" -> {top--; state = TetrisState.NewBlock;}
+                "w" ->{
                     idxBlockDegree = (idxBlockDegree+ nBlockDegrees -1)% nBlockDegrees;
                     currBlk = setOfBlockObjects!![idxBlockType][idxBlockDegree]!!;
                 }
-                ' ' -> {
+                " "  -> {
                     top--
                     state = TetrisState.NewBlock
                 }

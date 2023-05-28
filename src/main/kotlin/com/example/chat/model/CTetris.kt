@@ -64,7 +64,7 @@ class CTetris
         private var back = Tetris(15,10)//배경정보(벽, 컬러블록 tmp제외)
     }
 
-    override fun accept(key: Char): TetrisState {
+    override fun accept(key: String): TetrisState {
         inboard.state = inboard.accept(key)
         var tmpblk = back.oScreen.clip(inboard.top, inboard.left,inboard.top+ inboard.currBlk!!.get_dy(), inboard.left+inboard.currBlk!!.get_dx())
         var type = inboard.idxBlockType+1

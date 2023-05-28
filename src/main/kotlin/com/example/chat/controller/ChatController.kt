@@ -29,9 +29,10 @@ class ChatController {
         Tetris.init(setOfBlockArrays)
         var board = CTetris(15,10)
         board.state = TetrisState.NewBlock
-        var initKey = '0' + random.nextInt(7)
+//        var initKey = '0' + random.nextInt(7)
+        var initKey= chatMessage.key
         println("random num is $initKey")
-        board.state = board.accept(initKey)
+        board.state = board.accept(initKey!!)
         board.printScreen()
         clientTetrisMap[chatMessage.sender!!] = board //hashmap에 board instance 저장
         print("login by ${chatMessage.sender}")
@@ -51,6 +52,8 @@ class ChatController {
         var sender = chatMessage.sender //보낸사람 확인
         print("game running on $sender side")
         println()
+        print("key:${chatMessage.key}")
+        println()
         var board = clientTetrisMap[sender] //hash map에서 user name찾아서 board객체 찾아오기
 
         println("User: $sender, Board: $board")
@@ -64,7 +67,7 @@ class ChatController {
                 return chatMessage
             }
             TetrisState.Running -> {
-                if(key == 'q'){
+                if(key == "q"){
 
                     board.printScreen()
                     println("boad idcheck$board:")
@@ -81,7 +84,7 @@ class ChatController {
                 println()
             }
             TetrisState.NewBlock -> {
-                key = ('0' + random.nextInt(7))
+                key = ('0' + random.nextInt(7)).toString()
                 board.state = board.accept(key)
                 board.printScreen()
                 println()
