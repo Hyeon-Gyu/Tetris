@@ -18,3 +18,6 @@ web에서 keyboard 이벤트 발생-> json에 key value 담아서 송신 -> back
 2. 콘솔에서 사용자별 테트리스 보드 객체 확인가능
 3. 테트리스 보드판 3개 UI 미구현 상황
 4. 테트리스 정상동작 확인완료
+5. OnlyBoot 폴더 : spring boot에서 js, html로 화면 구성 -> REACT와 협업하여 연동 분할예정
+
+~23.05.28: React login 화면 연동 완료, 3명의 테트리스 화면에 출력하면 끝. 
