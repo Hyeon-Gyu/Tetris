@@ -56,6 +56,10 @@ class ChatController {
         print("key:${chatMessage.key}")
         println()
         var board = clientTetrisMap[sender] //hash map에서 user name찾아서 board객체 찾아오기
+        if (!board!!.valid){ //finished 된 이후론 key 입력을 못받아버리게 하기.
+            chatMessage.alert = "already game over!"
+            return chatMessage
+        }
 
         println("User: $sender, Board: $board")
 
@@ -76,6 +80,7 @@ class ChatController {
 
                     board.state = TetrisState.Finished
 //                    chatMessage.playerBoard = board.oScreen.get_array()
+                    chatMessage.alert = "game quit"
                     clientTetrisMap[chatMessage.sender!!] = board
                     return chatMessage
                 }
@@ -105,6 +110,7 @@ class ChatController {
                 if(board.state == TetrisState.Finished){
 //                    chatMessage.playerBoard = board.oScreen.get_array()
                     clientTetrisMap[chatMessage.sender!!] = board
+                    chatMessage.alert = "game end"
                     return chatMessage
                 }
             }
