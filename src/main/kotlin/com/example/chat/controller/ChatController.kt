@@ -85,6 +85,16 @@ class ChatController {
                 println("다음 state : ${board.state}")
                 board.printScreen()
                 println()
+                if(chatMessage.idxBT != null && board.state == TetrisState.NewBlock){
+                    //_ 날아오면 곧장 newblock 로직을 실행해줘야함. "_"와 같은 message에 함께 randnum 날아옴
+                    board.state = board.accept(chatMessage.idxBT!!)
+                    board.printScreen()
+                    println()
+                    if(board.state == TetrisState.Finished){
+                        clientTetrisMap[chatMessage.sender!!] = board
+                        return chatMessage
+                    }
+                }
             }
             TetrisState.NewBlock -> {
 //                key = chatMessage.key.toString()

@@ -216,18 +216,6 @@ open class Tetris {
                     tempBlk = iScreen.clip(top, left, top + currBlk!!.get_dy(), left + currBlk!!.get_dx())
                     tempBlk = tempBlk.add(currBlk!!)
                 } while (!tempBlk.anyGreaterThan(1))
-
-                tempBlk = iScreen.clip(top+1,left,top+1+currBlk!!.get_dy(), left+currBlk!!.get_dx())
-                //여기서 top1 더해준건 when 끝나면 어차피 다시 원래대로 돌아옴
-                tempBlk = tempBlk.add(currBlk!!)
-                if(tempBlk.anyGreaterThan(1)){
-                    tempBlk = iScreen.clip(top,left,top+currBlk!!.get_dy(), left+currBlk!!.get_dx())
-                    tempBlk = tempBlk.add(currBlk!!)
-                    state = TetrisState.NewBlock;
-                    oScreen.paste(iScreen,0,0)
-                    oScreen.paste(tempBlk,top,left)
-                    return state
-                }
             }
 
             else -> {
@@ -251,10 +239,10 @@ open class Tetris {
                     idxBlockDegree = (idxBlockDegree+ nBlockDegrees -1)% nBlockDegrees;
                     currBlk = setOfBlockObjects!![idxBlockType][idxBlockDegree]!!;
                 }
-//                "_"  -> {
-//                    top--
-//                    state = TetrisState.NewBlock
-//                }
+                "_"  -> {
+                    top--
+                    state = TetrisState.NewBlock
+                }
             }
             tempBlk = iScreen.clip(top,left,top+currBlk!!.get_dy(), left+currBlk!!.get_dx())
             tempBlk = tempBlk.add(currBlk!!)
