@@ -53,7 +53,7 @@ open class Tetris {
 
     open var iScreenDy: Int = 0
     open var iScreenDx: Int = 0
-    var state: TetrisState = TetrisState.BeforeStarting
+    var state: TetrisState = TetrisState.NewBlock
     var top: Int = 0
     var left: Int = 0
     var iScreen: Matrix
@@ -193,23 +193,45 @@ open class Tetris {
             "d" -> left++
             "s" -> {
                 top++
+                tempBlk = iScreen.clip(top+1,left,top+1+currBlk!!.get_dy(), left+currBlk!!.get_dx())
+                //여기서 top1 더해준건 when 끝나면 어차피 다시 원래대로 돌아옴
+                tempBlk = tempBlk.add(currBlk!!)
+                if(tempBlk.anyGreaterThan(1)){
+                    tempBlk = iScreen.clip(top,left,top+currBlk!!.get_dy(), left+currBlk!!.get_dx())
+                    tempBlk = tempBlk.add(currBlk!!)
+                    state = TetrisState.NewBlock;
+                    oScreen.paste(iScreen,0,0)
+                    oScreen.paste(tempBlk,top,left)
+                    return state
+                }
             }
-
             "w" -> {
                 idxBlockDegree = (idxBlockDegree + 1) % nBlockDegrees
                 currBlk = setOfBlockObjects!![idxBlockType][idxBlockDegree]
             }
 
-            " " -> {
+            "_" -> {
                 do {
                     top++
                     tempBlk = iScreen.clip(top, left, top + currBlk!!.get_dy(), left + currBlk!!.get_dx())
                     tempBlk = tempBlk.add(currBlk!!)
                 } while (!tempBlk.anyGreaterThan(1))
+
+                tempBlk = iScreen.clip(top+1,left,top+1+currBlk!!.get_dy(), left+currBlk!!.get_dx())
+                //여기서 top1 더해준건 when 끝나면 어차피 다시 원래대로 돌아옴
+                tempBlk = tempBlk.add(currBlk!!)
+                if(tempBlk.anyGreaterThan(1)){
+                    tempBlk = iScreen.clip(top,left,top+currBlk!!.get_dy(), left+currBlk!!.get_dx())
+                    tempBlk = tempBlk.add(currBlk!!)
+                    state = TetrisState.NewBlock;
+                    oScreen.paste(iScreen,0,0)
+                    oScreen.paste(tempBlk,top,left)
+                    return state
+                }
             }
 
             else -> {
-                println("state in accept:$state")
+                //println("state in accept:$state")
                 println("unknown key")
                 println()
             }
@@ -221,15 +243,18 @@ open class Tetris {
             when(key){
                 "a" -> left++
                 "d" -> left--
-                "s" -> {top--; state = TetrisState.NewBlock;}
+//                "s" -> {
+//                    state = TetrisState.NewBlock;
+//                    top--;
+//                }
                 "w" ->{
                     idxBlockDegree = (idxBlockDegree+ nBlockDegrees -1)% nBlockDegrees;
                     currBlk = setOfBlockObjects!![idxBlockType][idxBlockDegree]!!;
                 }
-                " "  -> {
-                    top--
-                    state = TetrisState.NewBlock
-                }
+//                "_"  -> {
+//                    top--
+//                    state = TetrisState.NewBlock
+//                }
             }
             tempBlk = iScreen.clip(top,left,top+currBlk!!.get_dy(), left+currBlk!!.get_dx())
             tempBlk = tempBlk.add(currBlk!!)

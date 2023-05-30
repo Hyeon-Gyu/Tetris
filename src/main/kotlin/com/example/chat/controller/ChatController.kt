@@ -1,3 +1,4 @@
+
 package com.example.chat.controller
 
 import com.example.chat.model.CTetris
@@ -30,17 +31,17 @@ class ChatController {
         var board = CTetris(15,10)
         board.state = TetrisState.NewBlock
 //        var initKey = '0' + random.nextInt(7)
-        var initKey= chatMessage.key
+        var initKey= chatMessage.idxBT
         println("random num is $initKey")
         board.state = board.accept(initKey!!)
         board.printScreen()
         clientTetrisMap[chatMessage.sender!!] = board //hashmap에 board instance 저장
-        print("login by ${chatMessage.sender}")
-        println()
-        println("Contents of clientTetrisMap:")
-        for ((user, board) in clientTetrisMap) {
-            println("User: $user, Board: $board")
-        }
+        //print("login by ${chatMessage.sender}")
+        //println()
+//        println("Contents of clientTetrisMap:")
+//        for ((user, board) in clientTetrisMap) {
+//            println("User: $user, Board: $board")
+//        }
 
         return chatMessage
     }
@@ -59,6 +60,7 @@ class ChatController {
         println("User: $sender, Board: $board")
 
         var state = board!!.state
+        println("현재 state: ${board!!.state}")
         when(state){
             TetrisState.Finished -> {
 //                chatMessage.playerBoard = board.oScreen.get_array()
@@ -80,12 +82,14 @@ class ChatController {
 
                 println("board id test: $board")
                 board.state = board.accept(key!!)
+                println("다음 state : ${board.state}")
                 board.printScreen()
                 println()
             }
             TetrisState.NewBlock -> {
 //                key = chatMessage.key.toString()
-                board.state = board.accept(key!!)
+//                board.state = board.accept(key!!)
+                board.state = board.accept(chatMessage.idxBT!!)
                 board.printScreen()
                 println()
                 if(board.state == TetrisState.Finished){
