@@ -4,6 +4,9 @@ package com.example.chat.model
 class CTetris
     (cy:Int, cx:Int):Tetris(cy,cx){
 
+    private var inboard = Tetris(15,10) // inboard에서 가져올 정보, top,left, currblk 모양
+    private var back = Tetris(15,10)//배경정보(벽, 컬러블록 tmp제외)
+
     override fun deleteFullLines(screen: Matrix, blk: Matrix?, top: Int, dy: Int, dx: Int, dw: Int): Matrix {
         var line:Matrix; var zero:Matrix; var temp:Matrix?
         if(blk == null) return screen
@@ -59,10 +62,10 @@ class CTetris
         }
     }
 
-    companion object{ //static과 유사한 역할
-        private var inboard = Tetris(15,10) // inboard에서 가져올 정보, top,left, currblk 모양
-        private var back = Tetris(15,10)//배경정보(벽, 컬러블록 tmp제외)
-    }
+//    companion object{ //static과 유사한 역할
+//        private var inboard = Tetris(15,10) // inboard에서 가져올 정보, top,left, currblk 모양
+//        private var back = Tetris(15,10)//배경정보(벽, 컬러블록 tmp제외)
+//    }
 
     override fun accept(key: String): TetrisState {
         inboard.state = inboard.accept(key)

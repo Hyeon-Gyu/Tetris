@@ -60,7 +60,7 @@ class ChatController {
         println("User: $sender, Board: $board")
 
         var state = board!!.state
-        println("현재 state: ${board!!.state}")
+        //println("현재 state: ${board!!.state}")
         when(state){
             TetrisState.Finished -> {
 //                chatMessage.playerBoard = board.oScreen.get_array()
@@ -82,7 +82,7 @@ class ChatController {
 
                 println("board id test: $board")
                 board.state = board.accept(key!!)
-                println("다음 state : ${board.state}")
+                //println("다음 state : ${board.state}")
                 board.printScreen()
                 println()
                 if(chatMessage.idxBT != null && board.state == TetrisState.NewBlock){
