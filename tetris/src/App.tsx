@@ -2,7 +2,7 @@ import React, { ChangeEvent } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import Matrix from "./Matrix"
-import { Tetris, TetrisState, randnum } from "./Tetris"
+import { Tetris, TetrisState, } from "./Tetris"
 import CTetris from './CTetris';
 import { useState, useEffect } from 'react';
 import { paste } from '@testing-library/user-event/dist/paste';
@@ -16,7 +16,7 @@ import * as StompJs from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 import { Client, Message, Stomp } from '@stomp/stompjs';
 
-
+export var randnum: number|undefined
 // var m1:Matrix = new Matrix(4,4)
 // m1.print()
 
@@ -402,10 +402,12 @@ function App() {
         };
 
 
+        
         /////////////////////////////////////////
         let blkList: any = [[]]
         useEffect(() => {
                 if (userkey != "q" && typeof cBoard != 'undefined') {
+
                         state = cBoard.accept(userkey)
 
                         console.log("cBoard.oScreen ;")
@@ -413,29 +415,57 @@ function App() {
                         // cBoard.oScreen.print()
                         if(state == TetrisState.NewBlock){
 
-                                console.log("key to send:", randnum)
-         
-                                var chatMessage = {
+                                
+
+                                console.log("cBoard.oScreen ;")
+                                cBoard.drawMatrix(cBoard.oScreen)
+        
+                                randnum = Math.floor(Math.random() * 8);
+                                state = cBoard.accept(randnum.toString())
+
+                                
+                                console.log("key to send:", userkey)
+                                console.log("idxBT to send:",randnum)
+                                var chatMessage2 = {
                                         sender: username,
-                                        content: userkey2,
-                                        key : randnum,
-                       
+                                        content: userkey,
+                                        key : userkey,
+                                        idxBT : randnum,
+                        
                                 };
                                 
-                                stompClient!.send("/app/chat.send", {},JSON.stringify(chatMessage))
+                                stompClient!.send("/app/chat.send", {},JSON.stringify(chatMessage2))
                         }
                         else if (state == TetrisState.Running){
                                 console.log("key to send:", userkey)
-                                var chatMessage2 = {
+
+                                var chatMessage = {
                                         sender: username,
                                         content: userkey2,
                                         key : userkey,
                        
                                 };
                                 
-                                stompClient!.send("/app/chat.send", {},JSON.stringify(chatMessage2))
+                                stompClient!.send("/app/chat.send", {},JSON.stringify(chatMessage))
                         }
 
+                        // state = cBoard.accept(userkey)
+
+                        // console.log("cBoard.oScreen ;")
+                        // cBoard.drawMatrix(cBoard.oScreen)
+
+                        // randnum=0;
+                        // console.log("key to send:", userkey)
+                        // console.log("idxBT to send:",randnum)
+                        // var chatMessage2 = {
+                        //         sender: username,
+                        //         content: userkey,
+                        //         key : userkey,
+                        //         idxBT : randnum,
+                
+                        // };
+                        
+                        // stompClient!.send("/app/chat.send", {},JSON.stringify(chatMessage2))
 
                 }
 
@@ -465,16 +495,16 @@ function App() {
                 setName(e.target.namefield.value)
                 username2 = e.target.namefield.value
                 // console.log(username.value)
-                cBoard= new CTetris(15, 10);
+                // cBoard= new CTetris(15, 10);
                 
-                var state!: TetrisState;
+                // var state!: TetrisState;
                 
-                state = cBoard.accept("asdf")
+                // state = cBoard.accept("asdf")
                 console.log("state:",state)//
                 console.log("randInt:",randnum)
 
                 console.log("cBoard.oScreen ;")
-                cBoard.drawMatrix(cBoard.oScreen)
+                // cBoard.drawMatrix(cBoard.oScreen)
 
                 
                 // console.log(username)
@@ -505,12 +535,20 @@ function App() {
                 console.log("inside onConnected()")
                 console.log("username to be send:",username2)
                 stompClient!.subscribe('/topic/public',onMessageReceived);
-
+                randnum = Math.floor(Math.random() * 8);
                 console.log(randnum)
+
+                cBoard= new CTetris(15, 10);
+                
+                var state!: TetrisState;
+                
+                state = cBoard.accept(randnum.toString())
+
+
                 // Tell your username to the server
                 stompClient!.send("/app/chat.register",
                         {},
-                        JSON.stringify({sender: username2, key:randnum, type: 'JOIN'})
+                        JSON.stringify({sender: username2, key:randnum, idxBT:randnum, type: 'JOIN'})
                 )
         }
 

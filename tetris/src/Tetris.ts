@@ -1,10 +1,11 @@
 import { start } from "repl";
 import Matrix from "./Matrix"
+import { randnum } from "./App";
 export enum TetrisState{
     Running, NewBlock, Finished
 }
 
-export var randnum: number|undefined
+// export var randnum: number|undefined
 
 export class Tetris{
         static idxBlockType(idxBlockType: any) {
@@ -186,10 +187,11 @@ export class Tetris{
             this.iScreen.paste(this.oScreen,0,0);
             this.state=TetrisState.Running;
 
-            const randInt = Math.floor(Math.random() * 8);
-            randnum = randInt;
-
-            this.idxBlockType = randInt.toString().charCodeAt(0) - "0".charCodeAt(0);
+            // const randInt = Math.floor(Math.random() * 8);
+            // randnum = randInt;
+            console.log("acceept got randnum ",randnum)
+            // this.idxBlockType = randInt.toString().charCodeAt(0) - "0".charCodeAt(0);
+            this.idxBlockType = randnum!
             this.idxBlockDegree = 0;
             this.currBlk = Tetris.setOfBlockObjects[this.idxBlockType][this.idxBlockDegree];
             this.top=0;
