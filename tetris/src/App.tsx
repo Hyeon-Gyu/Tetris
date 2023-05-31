@@ -351,6 +351,7 @@ var cBoard :CTetris | undefined ;
 var state!: TetrisState;
 
 
+const map = new Map<string, CTetris>();
 
 // state = TetrisState.NewBlock
 
@@ -539,7 +540,8 @@ function App() {
                 console.log(randnum)
 
                 cBoard= new CTetris(15, 10);
-                
+                map.set(username2!!,cBoard) //추가
+
                 var state!: TetrisState;
                 
                 state = cBoard.accept(randnum.toString())
@@ -559,6 +561,75 @@ function App() {
             
         function onMessageReceived(payload: { body: string; }) {
         var message = JSON.parse(payload.body);
+        //console.log("hellllllllllllllllllllllllllllllllllllllllllll")
+        //이름 따오고, 키 따와서 map에서 객체 꺼내와서 돌리기.
+        if(username2 == message.sender){
+                console.log("username",username2);
+                console.log(message.sender);
+                return;
+        }
+        console.log("username:",username2);
+        
+        var user = message.sender;
+        console.log("message sender",user);
+        var key = message.key;
+        var board = map.get(user)
+        /*if(!!board.valid){
+                console.log("already game over")
+                exit();
+        }
+        */
+        var state = board?.state;
+        switch(state){
+                case TetrisState.Finished:
+                        console.log(board);
+                        map.set(user,board!!);
+                        break;
+                case TetrisState.Running:
+                        if(key == 'q'){
+                                console.log(board);
+                                board!!.state = TetrisState.Finished;
+                                //board.valid = 0 
+                                map.set(user,board!!);
+                                break;
+                                //exit() 어캐 종료시키누..
+                        }
+                        board!!.state = board!!.accept(key);
+                        console.log(board);
+
+                        if(message.idxBT != null && board!!.state == TetrisState.NewBlock){
+                                board!!.state = board!!.accept(message.idxBT);
+                                console.log(board);
+                                if(board!!.state == TetrisState.Finished){
+                                        map.set(user,board!!);
+                                        //exit() 끝내는거 모름
+                                        break;
+                                }
+                        }
+                        break;
+                        //곧장 newblock 케이스로 내려와서 로직 시작
+                        //(state가 newblock이 아니면 조건문 안거치고 exit하면 됨)
+                case TetrisState.NewBlock:
+                        if(message.idxBT != null && board!!.state == TetrisState.NewBlock){
+                                board!!.state = board!!.accept(message.idxBT);
+                                console.log(board);
+                                if(board!!.state == TetrisState.Finished){
+                                        map.set(user,board!!);
+                                        //exit() 끝내는거 모름
+                                        break;
+                                }
+                        }
+                        break;
+                default:
+                        console.log("wrong key");
+                        //exit();
+                        break;
+
+
+
+        }
+
+
         // if(message.playerBoard){
         //         var Board = message.playerBoard;
         //         console.log(Board);
