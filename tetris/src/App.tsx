@@ -353,7 +353,7 @@ var cBoard :CTetris | undefined ;
 var state!: TetrisState;
 
 
-const map = new Map<string, CTetris>();
+const map: Map<string, CTetris> = new Map();
 
 // state = TetrisState.NewBlock
 
@@ -520,11 +520,11 @@ function App() {
                 console.log("username to be send:",username2)//state로 초기화하는 변수인 username썼더니 null exception떠서 새로만든변수
                 stompClient!.subscribe('/topic/public',onMessageReceived);//메시지를 받으면 onMessageReceived호출
 
-                randnum = Math.floor(Math.random() * 8);//클라이언트에서 랜덤넘버 생성
+                randnum = Math.floor(Math.random() * 7);//클라이언트에서 랜덤넘버 생성
                 console.log(randnum)
 
                 cBoard= new CTetris(15, 10);//클라이언트의 보드 생성
-                map.set(username2!!,cBoard) //클라이언트의 (유저-보드) 저장소
+                // map.set(username2!!,cBoard) //클라이언트의 (유저-보드) 저장소
 
                 var state!: TetrisState;
                 
@@ -551,23 +551,39 @@ function App() {
                 var message = JSON.parse(payload.body);
                 //console.log("hellllllllllllllllllllllllllllllllllllllllllll")
                 //이름 따오고, 키 따와서 map에서 객체 꺼내와서 돌리기.
+                console.log(message)
                 if(username2 == message.sender){
                         console.log("username",username2);
                         console.log(message.sender);
+
                         return;
                 }
                 console.log("username:",username2);
                 
                 var user = message.sender;
                 console.log("message sender",user);
+                // console.log("============= ", map.keys);
+                if(!map.has(user)){
+                        console.log("ififififIFIFIFIFIFIFIFI")
+                        var bboard = new CTetris(15,10);
+                        
+                        map.set(user, bboard)
+
+                        
+                }
                 var key = message.key;
+                console.log("user just before get board", user)
                 var board = map.get(user)
+
+                console.log("+++++++++++++++++++++++++++")
+                console.log(board?.oScreen)
                 /*if(!!board.valid){
                         console.log("already game over")
                         exit();
                 }
                 */
                 var state = board?.state;
+                console.log("asdfasdf::::",state);
                 switch(state){
                         case TetrisState.Finished:
                                 console.log(board);
@@ -587,6 +603,7 @@ function App() {
 
                                 if(message.idxBT != null && board!!.state == TetrisState.NewBlock){
                                         board!!.state = board!!.accept(message.idxBT);
+                                        map.set(user,board!!);
                                         console.log(board);
                                         if(board!!.state == TetrisState.Finished){
                                                 map.set(user,board!!);
@@ -600,6 +617,8 @@ function App() {
                         case TetrisState.NewBlock:
                                 if(message.idxBT != null && board!!.state == TetrisState.NewBlock){
                                         board!!.state = board!!.accept(message.idxBT);
+                                        console.log("state in NEWBLOCK", board!!.state)
+                                        map.set(user,board!!);
                                         console.log(board);
                                         if(board!!.state == TetrisState.Finished){
                                                 map.set(user,board!!);
@@ -609,6 +628,7 @@ function App() {
                                 }
                                 break;
                         default:
+                                console.log(state)
                                 console.log("wrong key");
                                 //exit();
                                 break;
