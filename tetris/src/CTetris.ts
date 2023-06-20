@@ -216,12 +216,12 @@ class CTetris extends Tetris{
 
 
 
-        console.log("collboard state: "+this.state)
-        console.log("collBoard.oScreen ; ")
-        collBoard.drawMatrix(collBoard.get_oScreen())
+        // console.log("collboard state: "+this.state)
+        // console.log("collBoard.oScreen ; ")
+        // collBoard.drawMatrix(collBoard.get_oScreen())
 
         var tempBlk:Matrix = new Matrix(0,0);
-        console.log("collboard state: "+collBoard.state)
+        // console.log("collboard state: "+collBoard.state)
         if(collBoard.get_oScreen().anyGreaterThan(1) == true){
             switch(key){
                 case "a": this.left++; break;
@@ -284,7 +284,8 @@ class CTetris extends Tetris{
 
                             this.oScreen.paste(this.iScreen,0,0)
                             this.oScreen.paste(tmp, collBoard.get_top(),collBoard.get_left())
-
+                            
+                            
 
                         }
 
@@ -297,14 +298,17 @@ class CTetris extends Tetris{
         }
 
 
-        this.drawMatrix(this.oScreen)
+        // this.drawMatrix(this.oScreen)
         // this.oScreen.print()
         console.log("collBoard oScreen:")
         collBoard.oScreen.print()
+        // console.log("here+++++++++++")
+        // this.oScreen.print()
+  
 
         return this.state;
     }
-
+   
 
     drawMatrix(oScreen: Matrix): void {
         var dy:number = oScreen.get_dy();

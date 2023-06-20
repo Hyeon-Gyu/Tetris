@@ -259,7 +259,7 @@ export class Tetris{
         }
         this.oScreen.paste(this.iScreen,0,0);
 
-        console.log("paste block into oScreen. top:"+this.top+"left:"+this.left)
+        // console.log("paste block into oScreen. top:"+this.top+"left:"+this.left)
         this.oScreen.paste(tempBlk, this.top, this.left); console.log("\n");
 
         // Tetris.drawMatrix(this.oScreen)
