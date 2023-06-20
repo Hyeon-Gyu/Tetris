@@ -360,7 +360,7 @@ function App() {
         
         ///
 
-
+        var alert = "";
         const [userkey, setKey] = useState('');
         const [incoming, setIncoming] = useState(0)
         const detectIncoming = () => setIncoming(incoming + 1);
@@ -432,7 +432,7 @@ function App() {
                                         content: userkey,
                                         key : userkey,
                                         idxBT : randnum,
-                        
+                                        alert : alert,
                                 };
                                 
                                 stompClient!.send("/app/chat.send", {},JSON.stringify(chatMessage2))
@@ -563,6 +563,8 @@ function App() {
         var message = JSON.parse(payload.body);
         //console.log("hellllllllllllllllllllllllllllllllllllllllllll")
         //이름 따오고, 키 따와서 map에서 객체 꺼내와서 돌리기.
+
+        console.log("1111111111111111111111111111",message.alert);
         if(username2 == message.sender){
                 console.log("username",username2);
                 console.log(message.sender);
