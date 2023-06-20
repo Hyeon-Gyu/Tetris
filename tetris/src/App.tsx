@@ -347,8 +347,9 @@ var stompClient: StompJs.CompatClient | null = null;
 // var let cBoard: CTetris = new CTetris(15, 10);
 // var state!: TetrisState;
 
-var cBoard :CTetris | undefined ;
 
+
+var cBoard :CTetris | undefined ;
 var state!: TetrisState;
 
 
@@ -357,9 +358,6 @@ const map = new Map<string, CTetris>();
 // state = TetrisState.NewBlock
 
 function App() {
-
-        
-        ///
 
 
         const [userkey, setKey] = useState('');
@@ -401,7 +399,7 @@ function App() {
         /////////////////////////////////////////
         let blkList: any = [[]]
         useEffect(() => {
-                if (userkey != "q" && typeof cBoard != 'undefined') {
+                if (userkey != "q" && typeof cBoard != 'undefined' && state != TetrisState.Finished) {
 
                         state = cBoard.accept(userkey)//클라이언트의 로직 실행
                         setScreen(cBoard.oScreen);//
@@ -447,6 +445,8 @@ function App() {
                 }
 
                 if (userkey == 'q'){
+
+                        state = TetrisState.Finished
                         var chatMessageQuit = {//서버에게 보낼 메시지
                                 sender: username,
                                 content: userkey,
@@ -462,7 +462,8 @@ function App() {
 
 
         if(typeof cBoard != 'undefined'){
-                const outputDisplay = cBoard.oScreen.get_array()
+                // const outputDisplay = cBoard.oScreen.get_array()
+                const outputDisplay = screen!.get_array()
                 
                 //blkList = outputDisplay[0].map((blk)=>(<Display blk={blk}/>))
 
