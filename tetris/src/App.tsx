@@ -575,7 +575,9 @@ function App() {
                 console.log("user just before get board", user)
                 var board = map.get(user)
 
+                
                 console.log("+++++++++++++++++++++++++++")
+
                 console.log(board?.oScreen)
                 /*if(!!board.valid){
                         console.log("already game over")
