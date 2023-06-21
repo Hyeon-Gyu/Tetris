@@ -548,6 +548,21 @@ function App() {
             
             
         function onMessageReceived(payload: { body: string; }) {
+
+
+                //
+                const mapIterator2 = Array.from(Object.keys(message.clientTetrisMap)) // 서버에 저장되어있는 키 값들을 추출
+                        const mapIterator = Array.from(map.keys())
+                        mapIterator2.filter(
+                                function(x) {
+                                        return !mapIterator.includes(x)
+                                }
+                        ).forEach(
+                                function(x) {
+                                        map.set(x, message.clientTetrisMap[x])
+                                }
+                        )
+                //
                 var message = JSON.parse(payload.body);
                 //console.log("hellllllllllllllllllllllllllllllllllllllllllll")
                 //이름 따오고, 키 따와서 map에서 객체 꺼내와서 돌리기.
