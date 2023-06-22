@@ -16,7 +16,7 @@ import * as StompJs from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 import { Client, Message, Stomp } from '@stomp/stompjs';
 
-export var randnum: number|undefined
+
 // var m1:Matrix = new Matrix(4,4)
 // m1.print()
 
@@ -342,12 +342,14 @@ CTetris.init(setOfColorBlockArrays);
 console.log("rendered")
 
 var stompClient: StompJs.CompatClient | null = null;
-var cBoard :CTetris | undefined ;
-var state!: TetrisState;
 
-const map: Map<string, CTetris> = new Map();
+// var state!: TetrisState;
+
+var map: Map<string, CTetris> = new Map();
+var cBoard :CTetris | undefined ;
 
 function App() {
+       
         const [userkey, setKey] = useState('');
         const [incoming, setIncoming] = useState(0)
         const [username, setName] = useState('');
@@ -379,17 +381,17 @@ function App() {
 
         let blkList: any = [[]]
         useEffect(() => {
-                if (userkey != "q" && typeof cBoard != 'undefined' && state != TetrisState.Finished) {
+                if (userkey != "q" && typeof cBoard != 'undefined' && cBoard.state != TetrisState.Finished) {
 
-                        state = cBoard.accept(userkey)//클라이언트의 로직 실행
+                        cBoard.state = cBoard.accept(userkey)//클라이언트의 로직 실행
                         setScreen(cBoard.oScreen);//
                         console.log("cBoard.oScreen ;")
                         cBoard.drawMatrix(cBoard.oScreen)
 
-                        if(state == TetrisState.NewBlock){//새로운 블록 생성시
+                        if(cBoard.state == TetrisState.NewBlock){//새로운 블록 생성시
    
-                                randnum = Math.floor(Math.random() * 8);//클라이언트가 랜덤넘버 생성
-                                state = cBoard.accept(randnum.toString())//클라이언트의 로직 실행
+                                var randnum = Math.floor(Math.random() * 8);//클라이언트가 랜덤넘버 생성
+                                cBoard.state = cBoard.accept(randnum.toString())//클라이언트의 로직 실행
                                 cBoard.drawMatrix(cBoard.oScreen)
                                 setScreen(cBoard.oScreen);
 
@@ -405,7 +407,7 @@ function App() {
                                 console.log(cBoard)
                                 stompClient!.send("/app/chat.send", {},JSON.stringify(chatMessage2))//컨트롤러의 chat.send로 매핑
                         }
-                        else if (state == TetrisState.Running){//이름과 키만 보내면 되는 상황
+                        else if (cBoard.state == TetrisState.Running){//이름과 키만 보내면 되는 상황
                                 console.log("key to send:", userkey)
                                 setScreen(cBoard.oScreen);
                                 //accept 로직은 조건문 바깥에서 실행되었습니다.
@@ -419,7 +421,7 @@ function App() {
                         }
                 }
                 if (userkey == 'q'){
-                        state = TetrisState.Finished
+                        cBoard!.state = TetrisState.Finished
                         var chatMessageQuit = {//서버에게 보낼 메시지
                                 sender: username,
                                 content: userkey,
@@ -470,22 +472,20 @@ function App() {
                 console.log("username to be send:",username2)//state로 초기화하는 변수인 username썼더니 null exception떠서 새로만든변수
                 stompClient!.subscribe('/topic/public',onMessageReceived);//메시지를 받으면 onMessageReceived호출
                 stompClient!.subscribe('/topic/prevuser',getPrevUsers);
-                randnum = Math.floor(Math.random() * 7);//클라이언트에서 랜덤넘버 생성
+                var randnum = Math.floor(Math.random() * 7);//클라이언트에서 랜덤넘버 생성
                 console.log(randnum)
 
                 cBoard= new CTetris(15, 10);//클라이언트의 보드 생성 //전역변수로 설정되어있음 //본인 보드는 map 구조로 관리하는게 아니라 그냥 따로 존재한다
-                console.log(typeof(cBoard))
-                // map.set(username2!!,cBoard) //클라이언트의 (유저-보드) 저장소
+                console.log("state(Newblock,1):",cBoard.state)
 
-                var state: TetrisState = TetrisState.NewBlock;
-                
-                state = cBoard.accept(randnum.toString())//클라이언트의 로직 시행
 
                 cBoard.state = cBoard.accept(randnum.toString())//클라이언트의 로직 시행
-                map.set(username2!!,cBoard) //클라이언트의 (유저-보드) 저장소
-                cBoard.drawMatrix(cBoard.oScreen)
+                console.log("state(Running,0)", cBoard.state)
+
+                map.set(username2!,cBoard) //클라이언트의 (유저-보드) 저장소
                 console.log("----this is",username2,"'s board");
-                console.log(cBoard.oScreen);
+                console.log(cBoard.oScreen); // 이게 빈보드야 왜
+                console.log(map.get(username2!))// 이게 왜 빈보드냐고
                 setScreen(cBoard.oScreen);
                 
                 // Tell your username to the server
@@ -507,16 +507,20 @@ function App() {
                 const mapIterator = Array.from(map.keys())
                 mapIterator2.filter(
                         function(x) {
-                                console.log("여기가 실행이 되어야돼")
                                 return !mapIterator.includes(x)
                         }
                 ).forEach(
                         function(x) {
-                                var board = new CTetris(15,10)
+                                var board:CTetris = new CTetris(15,10)
+                               
                                 board.state = board.accept(message.oneTimeUseMap[x])
+
                                 console.log("user: ",x)
                                 console.log("randnum:",message.oneTimeUseMap[x])
                                 map.set(x,board)
+                                console.log("=============    +++++++++++++")
+                                console.log(map.get(x))
+                                console.log(board.oScreen)
                         }
                 )
                 
@@ -596,7 +600,7 @@ function App() {
                                 }
                                 break;
                         default:
-                                console.log(state)
+                                console.log(cBoard!.state)
                                 console.log("wrong key");
                                 break;
                 }
