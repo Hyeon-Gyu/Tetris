@@ -187,9 +187,7 @@ export class Tetris{
             this.iScreen.paste(this.oScreen,0,0);
             this.state=TetrisState.Running;
 
-            // const randInt = Math.floor(Math.random() * 8);
-            // randnum = randInt;
-            console.log("acceept got randnum ",randnum)
+            console.log("*************accept got randnum ",randnum)
             // this.idxBlockType = randInt.toString().charCodeAt(0) - "0".charCodeAt(0);
             this.idxBlockType = randnum!
             this.idxBlockDegree = 0;

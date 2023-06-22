@@ -196,11 +196,6 @@ class CTetris extends Tetris{
         for(y = nScanned-1; y>=0; y--){
             cy = top+y+nDeleted;
             line = screen.clip(cy,0,cy+1,screen.get_dx()).int2bool();
-            line.print()
-
-
-            // if(line.sum()==screen.get_dx()){
-
             if(line.sum()==18){
                 temp = screen.clip(0,0,cy,screen.get_dx());
                 screen.paste(temp,1,0);
@@ -211,17 +206,7 @@ class CTetris extends Tetris{
         return screen;
     }
     accept(key:string){
-        // this.state = super.accept(key)
-        // collBoard.accept(key)
-
-
-
-        // console.log("collboard state: "+this.state)
-        // console.log("collBoard.oScreen ; ")
-        // collBoard.drawMatrix(collBoard.get_oScreen())
-
         var tempBlk:Matrix = new Matrix(0,0);
-        // console.log("collboard state: "+collBoard.state)
         if(collBoard.get_oScreen().anyGreaterThan(1) == true){
             switch(key){
                 case "a": this.left++; break;
@@ -238,25 +223,15 @@ class CTetris extends Tetris{
             tempBlk = tempBlk.add(this.currBlk);
             this.oScreen.paste(this.iScreen,0,0);
         }
-
-        //
-
         if(this.state==TetrisState.Running){
-
             this.state = collBoard.accept(key)
             // super.accept(key)
             if(collBoard.get_oScreen().anyGreaterThan(1) != true ){
                 // this.iScreen.paste(this.oScreen,0,0)
                 var tmp:Matrix = this.iScreen.clip(collBoard.get_top(),collBoard.get_left(),collBoard.get_top()+collBoard.currBlk.get_dy(),collBoard.get_left()+collBoard.currBlk.get_dx())
-
-
                 tmp = tmp.add(CTetris.setOfBlockObjects[collBoard.idxBlockType!][collBoard.idxBlockDegree!])
-
                 this.oScreen.paste(this.iScreen,0,0)
                 this.oScreen.paste(tmp, collBoard.get_top(),collBoard.get_left())
-
-                // console.log("test")
-                // this.drawMatrix(this.get_oScreen())
             }
         }
         else if(this.state==TetrisState.NewBlock){
@@ -267,7 +242,8 @@ class CTetris extends Tetris{
                 // console.log("dfTest")
                 // this.drawMatrix(this.oScreen)
                 // this.oScreen = this.deleteFullLines(this.oScreen, collBoard.currBlk, collBoard.top, this.iScreenDy,this.iScreenDx,Tetris.iScreenDw)
-                this.state= collBoard.accept(key);console.log("bBlock this.state:"+this.state)
+                this.state= collBoard.accept(key);
+                console.log("bBlock this.state:"+this.state)
 
                 // if(collBoard.get_oScreen().anyGreaterThan(1) != true ){
                 //         this.accept(key)
@@ -276,40 +252,21 @@ class CTetris extends Tetris{
                 if(collBoard.get_oScreen().anyGreaterThan(1) != true ){
 
                         this.iScreen.paste(this.oScreen,0,0)
-                        console.log("this.iScreen:")
-                        this.iScreen.print()
+                        //console.log("this.iScreen:")
+                        //this.iScreen.print()
                         if(key=="s"||key=="_"){
                             var tmp:Matrix = this.iScreen.clip(collBoard.get_top(),collBoard.get_left(),collBoard.get_top()+collBoard.currBlk.get_dy(),collBoard.get_left()+collBoard.currBlk.get_dx())
                             tmp = tmp.add(CTetris.setOfBlockObjects[collBoard.idxBlockType!][collBoard.idxBlockDegree!])
 
                             this.oScreen.paste(this.iScreen,0,0)
                             this.oScreen.paste(tmp, collBoard.get_top(),collBoard.get_left())
-                            
-                            
-
                         }
-
-
-
-                        // console.log("test")
-                        // this.drawMatrix(this.get_oScreen())
                 }
 
         }
-
-
-        // this.drawMatrix(this.oScreen)
-        // this.oScreen.print()
-        console.log("collBoard oScreen:")
-        collBoard.oScreen.print()
-        // console.log("here+++++++++++")
-        // this.oScreen.print()
-  
-
         return this.state;
     }
    
-
     drawMatrix(oScreen: Matrix): void {
         var dy:number = oScreen.get_dy();
         var dx:number = oScreen.get_dx();
@@ -335,14 +292,7 @@ class CTetris extends Tetris{
 
                 }
             }
-            //console.log("\n");
-            // console.log(array[y]);
             console.log(oArray);
-
-
-            //230327
-
-
         }
     }
 
