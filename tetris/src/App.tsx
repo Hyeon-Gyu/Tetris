@@ -376,8 +376,7 @@ function App() {
         };
 
 
-        
-        /////////////////////////////////////////
+
         let blkList: any = [[]]
         useEffect(() => {
                 if (userkey != "q" && typeof cBoard != 'undefined' && state != TetrisState.Finished) {
@@ -386,10 +385,9 @@ function App() {
                         setScreen(cBoard.oScreen);//
                         console.log("cBoard.oScreen ;")
                         cBoard.drawMatrix(cBoard.oScreen)
-                        // cBoard.oScreen.print()
 
                         if(state == TetrisState.NewBlock){//새로운 블록 생성시
-                                //console.log("cBoard.oScreen ;")
+   
                                 randnum = Math.floor(Math.random() * 8);//클라이언트가 랜덤넘버 생성
                                 state = cBoard.accept(randnum.toString())//클라이언트의 로직 실행
                                 cBoard.drawMatrix(cBoard.oScreen)
@@ -471,12 +469,17 @@ function App() {
                 console.log("inside onConnected()")
                 console.log("username to be send:",username2)//state로 초기화하는 변수인 username썼더니 null exception떠서 새로만든변수
                 stompClient!.subscribe('/topic/public',onMessageReceived);//메시지를 받으면 onMessageReceived호출
-
+                stompClient!.subscribe('/topic/prevuser',getPrevUsers);
                 randnum = Math.floor(Math.random() * 7);//클라이언트에서 랜덤넘버 생성
                 console.log(randnum)
 
-                cBoard= new CTetris(15, 10);//클라이언트의 보드 생성
-                cBoard.state = TetrisState.NewBlock;
+                cBoard= new CTetris(15, 10);//클라이언트의 보드 생성 //전역변수로 설정되어있음 //본인 보드는 map 구조로 관리하는게 아니라 그냥 따로 존재한다
+                console.log(typeof(cBoard))
+                // map.set(username2!!,cBoard) //클라이언트의 (유저-보드) 저장소
+
+                var state: TetrisState = TetrisState.NewBlock;
+                
+                state = cBoard.accept(randnum.toString())//클라이언트의 로직 시행
 
                 cBoard.state = cBoard.accept(randnum.toString())//클라이언트의 로직 시행
                 map.set(username2!!,cBoard) //클라이언트의 (유저-보드) 저장소
@@ -495,73 +498,99 @@ function App() {
 
 
         
-        
+        function getPrevUsers(payload: { body: string; }){
+
+                var message = JSON.parse(payload.body);
+                
+                //b가 a를 얻는 코드
+                const mapIterator2 = Array.from(Object.keys(message.oneTimeUseMap)) // 서버에 저장되어있는 키 값들을 추출
+                const mapIterator = Array.from(map.keys())
+                mapIterator2.filter(
+                        function(x) {
+                                console.log("여기가 실행이 되어야돼")
+                                return !mapIterator.includes(x)
+                        }
+                ).forEach(
+                        function(x) {
+                                var board = new CTetris(15,10)
+                                board.state = board.accept(message.oneTimeUseMap[x])
+                                console.log("user: ",x)
+                                console.log("randnum:",message.oneTimeUseMap[x])
+                                map.set(x,board)
+                        }
+                )
+                
+                console.log("msg sender :" ,message.sender)
+                console.log(map.get(message.sender))
+                
+               
+        }
             
             
         function onMessageReceived(payload: { body: string; }) {
                 var message = JSON.parse(payload.body);
                 console.log(message)
-                if(username2 == message.sender){
-                        console.log("same sender and me!!!") //본인이 입력한 키로 인한 accept실행은 useEffect쪽에서 실행됨. 다른 사람들의 key로 인한 accept로직 실행만 여기서 동작
+                var user:string = message.sender;
+                var key = message.key;
+                if(username2 == message.sender){ //본인은 서버에서 온 message를 수신할 필요가 없음 (이미 useeffect로 로직은 돌아간 상태)
+                        console.log("username",username2);
+                        console.log("message.sender:",message.sender);
+                        console.log("message sender's board")
+                        console.log(map.get(message.sender))
                         return;
                 }
                 console.log("username:",username2);
-                var user = message.sender;
                 console.log("message sender",user);
-                if(!map.has(user)){
-                        console.log("------first register-----")
-                        var bboard = new CTetris(15,10);
-                        bboard.state = TetrisState.NewBlock;
-                        bboard.state = bboard.accept(message.idxBT)
-                        console.log("idxBT: -------",message.idxBT)
-                        console.log("init",user,"board");                                 
-                        console.log(bboard.oScreen)
-                        //다른 user board가 처음 초기화하는 단계
-                        map.set(user, bboard)
-                        return;   
-                }
-                var key = message.key;
-                var board = map.get(user)
+                console.log("+++++++++++++++++++++++++++")
+                var board: CTetris | undefined = map.get(user);
+                console.log(board)
+                if (typeof board === "undefined") {
+                        console.log("Board not found for user:", user);
+                        return;
+                      }
+                console.log((board.state)) //문자열 Running이야.
+                    
+        
 
-                console.log("-------------------------------before switch")
-                console.log(board!!.oScreen)
-                var state = board!!.state;
-                switch(state){
+                switch(board.state){
                         case TetrisState.Finished:
                                 console.log(board);
                                 map.set(user,board!!);
+                                console.log(map.get(message.sender))
                                 break;
                         case TetrisState.Running:
                                 if(key == 'q'){
                                         console.log(board);
-                                        board!!.state = TetrisState.Finished;
+                                        board.state = TetrisState.Finished;
                                         map.set(user,board!!);
+                                        console.log(map.get(message.sender))
                                         break;
                                 }
-                                board!!.state = board!!.accept(key);
+                                board.state = board.accept(key);
                                 console.log(board);
+                                map.set(user,board);
 
+                                console.log(map.get(message.sender))
                                 if(message.idxBT != null && board!!.state == TetrisState.NewBlock){
                                         console.log("여기는 newblock일때만 실행되는곳");
                                         board!!.state = board!!.accept(message.idxBT);
                                         console.log(board);
-                                        if(board!!.state == TetrisState.Finished){
+                                        if(board.state == TetrisState.Finished){
                                                 map.set(user,board!!);
+                                                console.log(map.get(message.sender))
                                                 break;
                                         }
-                                        map.set(user,board!!);
+                                        map.set(user,board);
                                 }
                                 break;
-                                //곧장 newblock 케이스로 내려와서 로직 시작
-                                //(state가 newblock이 아니면 조건문 안거치고 exit하면 됨)
                         case TetrisState.NewBlock:
-                                if(message.idxBT != null && board!!.state == TetrisState.NewBlock){
-                                        board!!.state = board!!.accept(message.idxBT);
-                                        console.log("state in NEWBLOCK", board!!.state)
-                                        map.set(user,board!!);
+                                if(message.idxBT != null && board.state == TetrisState.NewBlock){
+                                        board.state = board.accept(message.idxBT);
+                                        console.log("state in NEWBLOCK", board.state)
+                                        map.set(user,board);
                                         console.log(board);
                                         if(board!!.state == TetrisState.Finished){
-                                                map.set(user,board!!);
+                                                map.set(user,board);
                                                 break;
                                         }
                                 }
@@ -569,7 +598,6 @@ function App() {
                         default:
                                 console.log(state)
                                 console.log("wrong key");
-                                //exit();
                                 break;
                 }
         }
@@ -582,16 +610,10 @@ function App() {
                                 </label>
                                 <input type="submit" value="Submit" />
                         </form>
-                        
-
-
                         <input onChange={onChangeKey}></input>
-                       
                         <br></br>
                         userName:{username}
-
                         keyIn:{userkey}
-
                         <p>Display 불리는곳</p>
                         <div>{blkList[0]}</div>
                         <div>{blkList[1]}</div>
@@ -612,9 +634,6 @@ function App() {
                         <div>{blkList[16]}</div>
                         <div>{blkList[17]}</div>
                         <div>{blkList[18]}</div>
-
-
-
                 </>
         );
 }
