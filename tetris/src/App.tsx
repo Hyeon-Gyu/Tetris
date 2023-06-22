@@ -544,40 +544,47 @@ function App() {
 
 
         
-        
+        function getPrevUsers(payload: { body: string; }){
+
+                var message = JSON.parse(payload.body);
+                
+                //b가 a를 얻는 코드
+                const mapIterator2 = Array.from(Object.keys(message.clientTetrisMap)) // 서버에 저장되어있는 키 값들을 추출
+                const mapIterator = Array.from(map.keys())
+                mapIterator2.filter(
+                        function(x) {
+                                return !mapIterator.includes(x)
+                        }
+                ).forEach(
+                        function(x) {
+                                map.set(x, message.clientTetrisMap[x])
+                        }
+                )
+        }
             
             
         function onMessageReceived(payload: { body: string; }) {
 
 
-                //
-                const mapIterator2 = Array.from(Object.keys(message.clientTetrisMap)) // 서버에 저장되어있는 키 값들을 추출
-                        const mapIterator = Array.from(map.keys())
-                        mapIterator2.filter(
-                                function(x) {
-                                        return !mapIterator.includes(x)
-                                }
-                        ).forEach(
-                                function(x) {
-                                        map.set(x, message.clientTetrisMap[x])
-                                }
-                        )
-                //
+
                 var message = JSON.parse(payload.body);
                 //console.log("hellllllllllllllllllllllllllllllllllllllllllll")
                 //이름 따오고, 키 따와서 map에서 객체 꺼내와서 돌리기.
                 console.log(message)
-                if(username2 == message.sender){
-                        console.log("username",username2);
+                if(username == message.sender){
+                        console.log("username",username);
                         console.log(message.sender);
 
                         return;
                 }
-                console.log("username:",username2);
+                console.log("username:",username);
                 
                 var user = message.sender;
                 console.log("message sender",user);
-                // console.log("============= ", map.keys);
+
+
+
+                //a가 b를 얻는 코드
                 if(!map.has(user)){
                         console.log("ififififIFIFIFIFIFIFIFI")
                         var bboard = new CTetris(15,10);
@@ -586,6 +593,9 @@ function App() {
 
                         
                 }
+                //
+
+
                 var key = message.key;
                 console.log("user just before get board", user)
                 var board = map.get(user)
