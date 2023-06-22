@@ -13,6 +13,7 @@ import org.springframework.messaging.handler.annotation.SendTo
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor
 import org.springframework.stereotype.Controller
 import java.util.*
+import kotlin.collections.HashMap
 
 
 @Controller
@@ -21,6 +22,7 @@ class ChatController {
     companion object{
         var random = Random()
         var clientTetrisMap:MutableMap<String, CTetris> = HashMap()
+        var oneTimeUseMap:MutableMap<String, String> = HashMap()
     }
 
     @MessageMapping("/chat.register")
@@ -34,8 +36,9 @@ class ChatController {
         println("random num is $initKey")
         board.state = board.accept(initKey!!)
         board.printScreen()
+        oneTimeUseMap[chatMessage.sender!!] = initKey //초기 생성 랜덤 숫자를 저장, ctetris 객체를 저장하지말고
         clientTetrisMap[chatMessage.sender!!] = board //hashmap에 board instance 저장
-        chatMessage.clientTetrisMap = clientTetrisMap
+        chatMessage.oneTimeUseMap = oneTimeUseMap
         return chatMessage
     }
 
