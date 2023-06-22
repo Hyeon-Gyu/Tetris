@@ -24,7 +24,7 @@ class ChatController {
     }
 
     @MessageMapping("/chat.register")
-    @SendTo("/topic/public")
+    @SendTo("/topic/prevuser")
     fun register(@Payload chatMessage: ChatMessage, headerAccessor: SimpMessageHeaderAccessor): ChatMessage {
         headerAccessor.sessionAttributes!!["username"] = chatMessage.sender
         Tetris.init(setOfBlockArrays)
@@ -35,6 +35,7 @@ class ChatController {
         board.state = board.accept(initKey!!)
         board.printScreen()
         clientTetrisMap[chatMessage.sender!!] = board //hashmap에 board instance 저장
+        chatMessage.clientTetrisMap = clientTetrisMap
         return chatMessage
     }
 
@@ -63,7 +64,6 @@ class ChatController {
                 }
             }
             TetrisState.NewBlock -> {
-                //따지고보면 여기는 제일 처음 제외하곤 동작할 일이 없음
                 return handleNewBlock(board,chatMessage)
             }
             else -> {
