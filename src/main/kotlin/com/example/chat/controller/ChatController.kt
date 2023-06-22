@@ -38,6 +38,7 @@ class ChatController {
         clientTetrisMap[chatMessage.sender!!] = board //hashmap에 board instance 저장
         //print("login by ${chatMessage.sender}")
         //println()
+        
 //        println("Contents of clientTetrisMap:")
 //        for ((user, board) in clientTetrisMap) {
 //            println("User: $user, Board: $board")
