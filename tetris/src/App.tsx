@@ -519,14 +519,15 @@ function App() {
                 console.log("inside onConnected()")
                 console.log("username to be send:",username2)//state로 초기화하는 변수인 username썼더니 null exception떠서 새로만든변수
                 stompClient!.subscribe('/topic/public',onMessageReceived);//메시지를 받으면 onMessageReceived호출
-
+                stompClient!.subscribe('/topic/prevuser',getPrevUsers);
                 randnum = Math.floor(Math.random() * 7);//클라이언트에서 랜덤넘버 생성
                 console.log(randnum)
 
                 cBoard= new CTetris(15, 10);//클라이언트의 보드 생성
+                console.log(typeof(cBoard))
                 // map.set(username2!!,cBoard) //클라이언트의 (유저-보드) 저장소
 
-                var state!: TetrisState;
+                var state: TetrisState = TetrisState.NewBlock;
                 
                 state = cBoard.accept(randnum.toString())//클라이언트의 로직 시행
 
@@ -558,63 +559,73 @@ function App() {
                 ).forEach(
                         function(x) {
                                 map.set(x, message.clientTetrisMap[x])
+                                console.log(" is my username?:", x)
+                                console.log("ctetris object ",message.clientTetrisMap[x])
                         }
                 )
+                console.log("msg sender :" ,message.sender)
+                console.log(map.get(message.sender))
+                console.log(typeof(map.get(message.sender)))
+
+
+               
         }
             
             
         function onMessageReceived(payload: { body: string; }) {
 
-
+                
 
                 var message = JSON.parse(payload.body);
                 //console.log("hellllllllllllllllllllllllllllllllllllllllllll")
                 //이름 따오고, 키 따와서 map에서 객체 꺼내와서 돌리기.
                 console.log(message)
-                if(username == message.sender){
+                
+                if(username2 == message.sender){
                         console.log("username",username);
                         console.log(message.sender);
-
+                        console.log(map.get(message.sender))
                         return;
                 }
-                console.log("username:",username);
+                console.log("username:",username2);
                 
-                var user = message.sender;
+                var user:string = message.sender;
                 console.log("message sender",user);
 
 
 
                 //a가 b를 얻는 코드
-                if(!map.has(user)){
-                        console.log("ififififIFIFIFIFIFIFIFI")
-                        var bboard = new CTetris(15,10);
+                // if(!map.has(user)){
+                //         console.log("ififififIFIFIFIFIFIFIFI")
+                //         var bboard = new CTetris(15,10);
                         
-                        map.set(user, bboard)
+                //         map.set(user, bboard)
 
                         
-                }
+                // }
                 //
 
 
                 var key = message.key;
                 console.log("user just before get board", user)
-                var board = map.get(user)
+                var board:CTetris = map.get(user)!
 
                 
                 console.log("+++++++++++++++++++++++++++")
 
-                console.log(board?.oScreen)
+                console.log(board!.oScreen)
                 /*if(!!board.valid){
                         console.log("already game over")
                         exit();
                 }
                 */
-                var state = board?.state;
-                console.log("asdfasdf::::",state);
-                switch(state){
+                //var state = board?.state;
+                //console.log("asdfasdf::::",state);
+                switch(board!.state){
                         case TetrisState.Finished:
                                 console.log(board);
                                 map.set(user,board!!);
+                                console.log(map.get(message.sender))
                                 break;
                         case TetrisState.Running:
                                 if(key == 'q'){
@@ -622,25 +633,28 @@ function App() {
                                         board!!.state = TetrisState.Finished;
                                         //board.valid = 0 
                                         map.set(user,board!!);
+                                        console.log(map.get(message.sender))
                                         break;
                                         //exit() 어캐 종료시키누..
                                 }
                                 board!!.state = board!!.accept(key);
                                 console.log(board);
+                                map.set(user,board!!);
 
+                                console.log(map.get(message.sender))
                                 if(message.idxBT != null && board!!.state == TetrisState.NewBlock){
                                         board!!.state = board!!.accept(message.idxBT);
                                         map.set(user,board!!);
                                         console.log(board);
                                         if(board!!.state == TetrisState.Finished){
                                                 map.set(user,board!!);
+                                                console.log(map.get(message.sender))
                                                 //exit() 끝내는거 모름
                                                 break;
                                         }
                                 }
                                 break;
-                                //곧장 newblock 케이스로 내려와서 로직 시작
-                                //(state가 newblock이 아니면 조건문 안거치고 exit하면 됨)
+                                
                         case TetrisState.NewBlock:
                                 if(message.idxBT != null && board!!.state == TetrisState.NewBlock){
                                         board!!.state = board!!.accept(message.idxBT);
@@ -649,7 +663,8 @@ function App() {
                                         console.log(board);
                                         if(board!!.state == TetrisState.Finished){
                                                 map.set(user,board!!);
-                                                //exit() 끝내는거 모름
+                                                console.log(map.get(message.sender))
+                                        
                                                 break;
                                         }
                                 }
@@ -665,7 +680,7 @@ function App() {
                 }
 
 
-
+                
         }
 
 
