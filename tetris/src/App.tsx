@@ -59,19 +59,29 @@ var map: Map<string, CTetris> = new Map();
 var stompClient: StompJs.CompatClient | null = null;
 var myName: string;
 
-var blkList: any = [[]]
 
-function displayBLK (name:string) {
-    var myboard = map.get(name)
 
-    const outputDisplay = myboard!.oScreen.get_array()
-    for (var i = 0; i < myboard!.oScreen.get_dy(); i++) {
-    blkList[i] = outputDisplay[i].map((blk) => (<Display blk={blk} />))
+function DisplayBLK (props:any) {
+    var myboard = map.get(props.name)
+    var blkList:any=[[]]
+
+    if(myboard != undefined){
+        const outputDisplay = myboard!.oScreen!.get_array()
+        for (var i = 0; i < myboard!.oScreen.get_dy(); i++) {
+        blkList[i] = outputDisplay[i].map((blk) => (<Display blk={blk} />))
+        }
     }
+   
 
-    // blkList2 = outputDisplay.map((line) => (<Display line={line} />))
+    return (
+        <div className='myBoard'>
+            {blkList.map((line:any)=> (<div>{line}</div>) )}
+        </div>
+    );
 
 }
+
+
 
 function App() {
     
@@ -186,7 +196,9 @@ function App() {
                 return;
         }
         //
-        displayBLK(myName)
+        // DisplayBLK(myName)
+
+        
 
     },[userkey,keyPressedCnt])
     
@@ -215,12 +227,16 @@ function App() {
                 console.log(board)
                 //setDrawScreen(board.oScreen.get_array())
                 map.set(x, board)
+                
+                // if(x != myName){
+                //     setOpposit(x)
+                // }
 
             }
         )
 
 
-        displayBLK(myName)//내 게임 시작화면(배경+뉴블록) 출력
+        // DisplayBLK(myName)//내 게임 시작화면(배경+뉴블록) 출력
 
         // console.log("msg sender :" ,message.sender)
         // console.log(map.get(message.sender))
@@ -316,12 +332,11 @@ function App() {
 
             </div>
 
-            <div className='myBoard'>
-            {blkList.map((line:any)=> (<div>{line}</div>) )}
-            </div>
 
+            <DisplayBLK name={myName} />
+            {/* blkList[i] = outputDisplay[i].map((blk) => (<Display blk={blk} />)) */}
             
-            
+            { Array.from(map.keys()).map((name) => (<DisplayBLK name={name}/>))}
 
         </>
     )
