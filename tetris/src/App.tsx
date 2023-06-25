@@ -1,5 +1,5 @@
 import { TetrisState } from './Tetris';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect ,useLayoutEffect} from 'react';
 import { CTetris } from './CTetris';
 import { setOfBlockArrays } from './setOfBlockArrays';
 import "./screen.css";
@@ -8,6 +8,9 @@ import * as StompJs from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 import { Client, Message, Stomp } from '@stomp/stompjs';
 import Matrix from './Matrix';
+
+import Display from './Display'
+import { displayPartsToString } from 'typescript';
 
 
 function Title(props: any) {
@@ -52,11 +55,28 @@ function printColor(value: number) {
 
 
 
-const map: Map<string, CTetris> = new Map();
+var map: Map<string, CTetris> = new Map();
 var stompClient: StompJs.CompatClient | null = null;
 var myName: string;
 
+var blkList: any = [[]]
+
+function displayBLK (name:string) {
+    var myboard = map.get(name)
+
+    const outputDisplay = myboard!.oScreen.get_array()
+    for (var i = 0; i < myboard!.oScreen.get_dy(); i++) {
+    blkList[i] = outputDisplay[i].map((blk) => (<Display blk={blk} />))
+    }
+
+    // blkList2 = outputDisplay.map((line) => (<Display line={line} />))
+
+}
+
 function App() {
+    
+
+    
     const [keyPressedCnt, setKeyPressed] = useState(0)
     const [drawScreen, setDrawScreen] = useState<number[][]>()
     const [userkey, setKey] = useState('');
@@ -111,8 +131,12 @@ function App() {
         }
     }
 
-    useEffect( () => {
+
+    useLayoutEffect( () => {//useLayoutEffect()를 활용하여 컴포넌트 렌더링 - useLayoutEffect 실행 - 화면 업데이트 순으로 effect를 실행시킬 수 있다.
+
+
         var myboard = map.get(myName)
+
         if (typeof myboard === "undefined") {
             console.log("myboard undefined");
             return;
@@ -130,7 +154,7 @@ function App() {
         myboard.state = myboard.accept(userkey)
         switch (myboard.state) {
             case TetrisState.NewBlock:
-                var randnum = Math.floor(Math.random() * 8);//클라이언트가 랜덤넘버 생성
+                var randnum = Math.floor(Math.random() * 7);//클라이언트가 랜덤넘버 생성
                 myboard.state = myboard.accept(randnum.toString())//클라이언트의 로직 실행
                 console.log("key to send:", userkey)
                 console.log("idxBT to send:", randnum)
@@ -161,7 +185,12 @@ function App() {
                 console.log("wrong state----")
                 return;
         }
+        //
+        displayBLK(myName)
+
     },[userkey,keyPressedCnt])
+    
+   
 
 
     const getPrevUsers = (payload: { body: string; }) => {
@@ -186,8 +215,13 @@ function App() {
                 console.log(board)
                 //setDrawScreen(board.oScreen.get_array())
                 map.set(x, board)
+
             }
         )
+
+
+        displayBLK(myName)//내 게임 시작화면(배경+뉴블록) 출력
+
         // console.log("msg sender :" ,message.sender)
         // console.log(map.get(message.sender))
     }
@@ -199,6 +233,7 @@ function App() {
         var key = message.key;
         if (myName == user) { //본인은 서버에서 온 message를 수신할 필요가 없음 (이미 useeffect로 로직은 돌아간 상태)
             console.log("내가 보낸 메시지는 나는 다시 수신할 필요가 없지요");
+            
             return;
         }
         var board: CTetris | undefined = map.get(user);
@@ -280,10 +315,19 @@ function App() {
                 </div>
 
             </div>
+
+            <div className='myBoard'>
+            {blkList.map((line:any)=> (<div>{line}</div>) )}
+            </div>
+
+            
+            
+
         </>
     )
 
 }
+
 
 
 export default App;
