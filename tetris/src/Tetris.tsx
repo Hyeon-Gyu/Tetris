@@ -238,12 +238,15 @@ export class Tetris {
                 tempBlk = tempBlk.add(this.currBlk);
                 if (tempBlk.anyGreaterThan(1)) {
                     this.state = TetrisState.NewBlock;
+                    this.top -=1;
                 }
                 else{
-                    this.top--;
+                    this.top -=1;
                     tempBlk = this.iScreen.clip(this.top, this.left, this.top+this.currBlk.get_dy(), this.left+this.currBlk.get_dx());
                     tempBlk = tempBlk.add(this.currBlk);
                 }
+                tempBlk = this.iScreen.clip(this.top, this.left, this.top+this.currBlk.get_dy(), this.left+this.currBlk.get_dx());
+                tempBlk = tempBlk.add(this.currBlk);
                 break;
             case 'w':
                 this.idxBlockDegree = (this.idxBlockDegree+1) % Tetris.nBlockDegrees;
@@ -265,7 +268,7 @@ export class Tetris {
             switch(key) {
                 case 'a': this.left++; break; // undo: move right
                 case 'd': this.left--; break; // undo: move left
-                case 's': this.top--; this.state = TetrisState.NewBlock; break; // undo: move up
+                //case 's': this.top--; this.state = TetrisState.NewBlock; break; // undo: move up
                 case 'w': // undo: rotateCCW
                 this.idxBlockDegree = (this.idxBlockDegree+Tetris.nBlockDegrees-1)%Tetris.nBlockDegrees;
                 this.currBlk = Tetris.setOfBlockObjects[this.idxBlockType][this.idxBlockDegree];
