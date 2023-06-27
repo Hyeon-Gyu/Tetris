@@ -67,6 +67,13 @@ class CTetris
 //        private var inboard = Tetris(15,10) // inboard에서 가져올 정보, top,left, currblk 모양
 //        private var back = Tetris(15,10)//배경정보(벽, 컬러블록 tmp제외)
 //    }
+//<<<<<<< HEAD
+//
+//    private var inboard = Tetris(15,10) // inboard에서 가져올 정보, top,left, currblk 모양
+//    private var back = Tetris(15,10)//배경정보(벽, 컬러블록 tmp제외)
+//
+//=======
+//>>>>>>> 02980de91523e07d4bd571db2273721e414c51e0
 
     override fun accept(key: String): TetrisState {
         inboard.state = inboard.accept(key)

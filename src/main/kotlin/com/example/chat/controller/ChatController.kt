@@ -25,7 +25,8 @@ class ChatController {
         var oneTimeUseMap:MutableMap<String, String> = HashMap()
     }
 
-    @MessageMapping("/chat.register")
+    @MessageMapping("/chat.register") //login 창
+
     @SendTo("/topic/prevuser")
     fun register(@Payload chatMessage: ChatMessage, headerAccessor: SimpMessageHeaderAccessor): ChatMessage {
         headerAccessor.sessionAttributes!!["username"] = chatMessage.sender
@@ -38,7 +39,9 @@ class ChatController {
         board.printScreen()
         oneTimeUseMap[chatMessage.sender!!] = initKey //초기 생성 랜덤 숫자를 저장, ctetris 객체를 저장하지말고
         clientTetrisMap[chatMessage.sender!!] = board //hashmap에 board instance 저장
+
         chatMessage.oneTimeUseMap = oneTimeUseMap
+
         return chatMessage
     }
 
@@ -57,6 +60,7 @@ class ChatController {
             TetrisState.Finished -> {
                 print(" $sender board game over")
                 clientTetrisMap[chatMessage.sender!!] = board
+                chatMessage.alert = "finished"
                 return chatMessage
             }
             TetrisState.Running -> {
