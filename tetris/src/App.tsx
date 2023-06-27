@@ -15,7 +15,7 @@ import { displayPartsToString } from 'typescript';
 function Title(props: any) {
     return (
         <div className="name">
-            <h1>3인용 컬러 테트리스</h1>
+            <h1>다인용 컬러 테트리스</h1>
         </div>
     )
 }
@@ -306,13 +306,15 @@ function App() {
             </form>
             <input onChange={onChangeKey}></input>
 
-            {/* <div className='gamescreen'>
+
+            <DisplayBLK name={myName} />
+            
+            <div className='gamescreen'>
                 <div>
                     <OppositeScreen />
                 </div>
 
-            </div> */}
-            <DisplayBLK name={myName} />
+            </div> 
             {Array.from(map.keys()).filter((name) => name != myName).map((name) => (<DisplayBLK name={name} />))}
         </>
     )

@@ -232,7 +232,19 @@ export class Tetris {
         switch(key){
             case 'a': this.left--; break;
             case 'd': this.left++; break;
-            case 's': this.top++; break;
+            case 's': 
+                this.top+=2; 
+                tempBlk = this.iScreen.clip(this.top, this.left, this.top+this.currBlk.get_dy(), this.left+this.currBlk.get_dx());
+                tempBlk = tempBlk.add(this.currBlk);
+                if (tempBlk.anyGreaterThan(1)) {
+                    this.state = TetrisState.NewBlock;
+                }
+                else{
+                    this.top--;
+                    tempBlk = this.iScreen.clip(this.top, this.left, this.top+this.currBlk.get_dy(), this.left+this.currBlk.get_dx());
+                    tempBlk = tempBlk.add(this.currBlk);
+                }
+                break;
             case 'w':
                 this.idxBlockDegree = (this.idxBlockDegree+1) % Tetris.nBlockDegrees;
                 this.currBlk = Tetris.setOfBlockObjects[this.idxBlockType][this.idxBlockDegree];
