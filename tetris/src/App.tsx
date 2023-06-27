@@ -29,29 +29,6 @@ function OppositeScreen(props: any) {
 }
 
 
-function printColor(value: number) {
-    switch (value) {
-        case 1:
-            return 'black';
-        case 0:
-            return 'white';
-        case 10:
-            return 'pink';
-        case 20:
-            return 'green';
-        case 30:
-            return 'yellow';
-        case 40:
-            return 'red';
-        case 50:
-            return 'blue';
-        case 60:
-            return 'purple';
-        case 70:
-            return 'brown';
-    }
-}
-
 
 
 var map: Map<string, CTetris> = new Map();
@@ -115,7 +92,7 @@ function App() {
         }
     }
 
-    useEffect(() => {//useLayoutEffect()를 활용하여 컴포넌트 렌더링 - useLayoutEffect 실행 - 화면 업데이트 순으로 effect를 실행시킬 수 있다.
+    useEffect(() => {
         var myboard = map.get(myName)
         if (typeof myboard === "undefined") {
             console.log("myboard undefined");
@@ -172,12 +149,9 @@ function App() {
                 console.log("wrong state----")
                 return;
         }
-        //
-        // DisplayBLK(myName)
 
-
-
-    }, [userkey, keyPressedCnt])
+    }, [keyPressedCnt]) //end of UseEffect()
+ 
 
     const getPrevUsers = (payload: { body: string; }) => {
         //먼저 온 사람의 존재를 모르기 때문에 서버로부터 map으로 먼저 온 사람들의 randnum으로 보드 객체 생성
@@ -200,6 +174,7 @@ function App() {
                 console.log("randnum:", message.oneTimeUseMap[x])
                 console.log(board)
                 map.set(x, board)
+                setDrawScreen(board!!.oScreen.get_array())
             }
         )
     }
@@ -211,7 +186,7 @@ function App() {
         var key = message.key;
         var board: CTetris | undefined = map.get(user);
         if (myName == user) { //본인은 서버에서 온 message를 수신할 필요가 없음 (이미 useeffect로 로직은 돌아간 상태)
-            console.log("내가 보낸 메시지는 나는 다시 수신할 필요가 없지요");
+                //     console.log("내가 보낸 메시지는 나는 다시 수신할 필요가 없지요");
             setDrawScreen(board!!.oScreen.get_array()) // 렌더링 코드
             return;
         }
@@ -272,23 +247,8 @@ function App() {
                 console.log("wrong key");
                 break;
         }
-    }
-    // useEffect(() => {
-    //     var myboard = map.get(name);
-    //     let blkList: any = [[]];
+    }//end of onMessageReceived()
 
-    //     if (myboard != undefined) {
-    //         var outputDisplay = myboard!.oScreen!.get_array();
-    //         blkList = outputDisplay.map((row: number[]) => (
-    //             <div className="row">
-    //                 {row.map((blk) => (
-    //                     <Display blk={blk} />
-    //                 ))}
-    //             </div>
-    //         ));
-    //     }
-    //     return <div className="myBoard">{blkList}</div>;
-    // }, [])
     const DisplayBLK = (props: any) => {
         var myboard = map.get(props.name);
         let blkList: any = [[]];
