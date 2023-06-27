@@ -185,6 +185,12 @@ function App() {
         var user = message.sender;
         var key = message.key;
         var board: CTetris | undefined = map.get(user);
+        //
+        var isfinished = message.alert;
+        if(isfinished == 'finished'){
+                alert(user+' is dead')
+        }
+        //
         if (myName == user) { //본인은 서버에서 온 message를 수신할 필요가 없음 (이미 useeffect로 로직은 돌아간 상태)
                 //     console.log("내가 보낸 메시지는 나는 다시 수신할 필요가 없지요");
             setDrawScreen(board!!.oScreen.get_array()) // 렌더링 코드
@@ -263,7 +269,13 @@ function App() {
                 </div>
             ));
         }
-        return <div className="myBoard">{blkList}</div>;
+        return (
+                <>      
+                <h3>{props.name}</h3>
+                <div className="myBoard">{blkList}</div>
+                </>
+        )
+        
     } 
 
     return (
