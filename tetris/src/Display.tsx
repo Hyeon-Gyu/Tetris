@@ -24,7 +24,7 @@ const Display = (props:any) => {
     }
 
     
-
+    
     return (
         <>
         
