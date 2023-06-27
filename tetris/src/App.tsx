@@ -30,12 +30,10 @@ function OppositeScreen(props: any) {
     )
 }
 
-
-
-
 var map: Map<string, CTetris> = new Map();
 var stompClient: StompJs.CompatClient | null = null;
 var myName: string;
+var peoplecount: string;
 
 function App() {
 
@@ -43,8 +41,8 @@ function App() {
     const [drawScreen, setDrawScreen] = useState<number[][]>()
     const [userkey, setKey] = useState('');
 
-
     const getUserName = (e: any) => {
+        alert("알림이 뜰 때까지 기다려주세요.")
         e.preventDefault()
         console.log('get user name called')
         console.log("username:", e.target.namefield.value)
@@ -64,9 +62,8 @@ function App() {
         };
     };
 
-
     const onConnected = () => {
-        alert("준비 완료")
+        alert("준비 완료 3명이 모이면 시작합니다.")
         console.log("inside onConnected()")
         console.log("username to be send:", myName)//state로 초기화하는 변수인 username썼더니 null exception떠서 새로만든변수
         stompClient!.subscribe('/topic/public', onMessageReceived);//메시지를 받으면 onMessageReceived호출
@@ -82,16 +79,25 @@ function App() {
     }
 
     const onChangeKey = (e: React.ChangeEvent<HTMLInputElement>) => {
-        console.log(myName)
-        console.log("keyIn:" + e.target.value[e.target.value.length - 1])
 
-        if (e.target.value[e.target.value.length - 1] == " ") {
-            setKey("_")//스페이스바는 백에서 _로 매핑되어 동작
-            setKeyPressed(keyPressedCnt + 1)
+        if (peoplecount == "Start"){
+
+            console.log(myName)
+            console.log("keyIn:" + e.target.value[e.target.value.length - 1])
+
+            if (e.target.value[e.target.value.length - 1] == " ") {
+                setKey("_")//스페이스바는 백에서 _로 매핑되어 동작
+                setKeyPressed(keyPressedCnt + 1)
+            }
+
+            else {
+                setKey(e.target.value[e.target.value.length - 1])
+                setKeyPressed(keyPressedCnt + 1)
+            }
         }
-        else {
-            setKey(e.target.value[e.target.value.length - 1])
-            setKeyPressed(keyPressedCnt + 1)
+
+        else{
+            e.target.value = ''
         }
     }
 
@@ -174,11 +180,11 @@ function App() {
                 return;
         }
     }, [keyPressedCnt]) //end of UseEffect()
- 
 
     const getPrevUsers = (payload: { body: string; }) => {
         //먼저 온 사람의 존재를 모르기 때문에 서버로부터 map으로 먼저 온 사람들의 randnum으로 보드 객체 생성
         var message = JSON.parse(payload.body);
+        peoplecount = message.peoplecount
         const mapIterator2 = Array.from(Object.keys(message.oneTimeUseMap)) // 서버에 저장되어있는 키 값들을 추출
         const mapIterator = Array.from(map.keys())
         mapIterator2.filter(
@@ -200,6 +206,9 @@ function App() {
                 setDrawScreen(board!!.oScreen.get_array())
             }
         )
+        
+        if (peoplecount == "Start")
+            alert("게임을 시작합니다.")
     }
 
     const onMessageReceived = (payload: { body: string; }) => {
@@ -210,15 +219,12 @@ function App() {
         var board: CTetris | undefined = map.get(user);
         //
         var isfinished = message.alert;
-        
+
         if(isfinished == 'finished' || isfinished =='game quit'){
-                // alert(user+' is dead')
-            
             var dead= board
             var tmp = board?.oScreen.get_array()
             for (let i=0; i<dead!.oScreen!.get_dx(); i++){
                 for (let j=0; j<dead!.oScreen.get_dy(); j++){
-
                     if (dead!.oScreen.get_array()[i][j]==0){
                         console.log("white WHITE")
                         tmp![i][j] = 100
@@ -350,7 +356,6 @@ function App() {
                     <div>
                         <OppositeScreen text="상대 테트리스"/>
                     </div>
-
                 </div> 
 
                 <div className='otherBoards'>
