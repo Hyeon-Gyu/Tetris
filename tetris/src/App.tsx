@@ -11,11 +11,13 @@ import { Client, Message, Stomp } from '@stomp/stompjs';
 import Display from './Display'
 import { displayPartsToString } from 'typescript';
 
+import Matrix from './Matrix';
+import "./App.css"
 
 function Title(props: any) {
     return (
         <div className="name">
-            <h1>3인용 컬러 테트리스</h1>
+            <h1>다인용 컬러 테트리스</h1>
         </div>
     )
 }
@@ -23,34 +25,11 @@ function Title(props: any) {
 function OppositeScreen(props: any) {
     return (
         <div className="OppositeScreen">
-            <h1>상대 테트리스</h1>
+            <h1>{props.text}</h1>
         </div>
     )
 }
 
-
-function printColor(value: number) {
-    switch (value) {
-        case 1:
-            return 'black';
-        case 0:
-            return 'white';
-        case 10:
-            return 'pink';
-        case 20:
-            return 'green';
-        case 30:
-            return 'yellow';
-        case 40:
-            return 'red';
-        case 50:
-            return 'blue';
-        case 60:
-            return 'purple';
-        case 70:
-            return 'brown';
-    }
-}
 
 
 
@@ -87,6 +66,7 @@ function App() {
 
 
     const onConnected = () => {
+        alert("준비 완료")
         console.log("inside onConnected()")
         console.log("username to be send:", myName)//state로 초기화하는 변수인 username썼더니 null exception떠서 새로만든변수
         stompClient!.subscribe('/topic/public', onMessageReceived);//메시지를 받으면 onMessageReceived호출
@@ -115,12 +95,13 @@ function App() {
         }
     }
 
-    useEffect(() => {//useLayoutEffect()를 활용하여 컴포넌트 렌더링 - useLayoutEffect 실행 - 화면 업데이트 순으로 effect를 실행시킬 수 있다.
+    useEffect(() => {
         var myboard = map.get(myName)
         if (typeof myboard === "undefined") {
             console.log("myboard undefined");
             return;
         }
+        console.log("내 보드 처음 꺼내왓을때 상태 :",myboard.state)
         if (userkey == 'q') {
             myboard.state = TetrisState.Finished
             setDrawScreen(myboard!!.oScreen.get_array()) // 렌더링 코드
@@ -131,8 +112,8 @@ function App() {
             };
             stompClient!.send("/app/chat.send", {}, JSON.stringify(chatMessageQuit))
         }
-        console.log("here")
-        myboard.state = myboard.accept(userkey)
+        console.log("1")
+        //myboard.state = myboard.accept(userkey)
         switch (myboard.state) {
             case TetrisState.NewBlock:
                 var randnum = Math.floor(Math.random() * 7);//클라이언트가 랜덤넘버 생성
@@ -147,12 +128,32 @@ function App() {
                 };
                 console.log(myboard.oScreen)
                 setDrawScreen(myboard!!.oScreen.get_array()) // 렌더링 코드
-                //setMyScreen(myboard.oScreen.get_array())
+                map.set(myName,myboard)
                 stompClient!.send("/app/chat.send", {}, JSON.stringify(chatMessage))//컨트롤러의 chat.send로 매핑
                 break;
             case TetrisState.Running:
+                console.log("2")
+                myboard.state = myboard.accept(userkey)
+                console.log("9")
+                console.log("내보드 running 처음진입 상태 :",myboard.state)
                 console.log("key to send:", userkey)
-                var chatMessage2 = {//서버에게 보낼 메시지
+                if(myboard.state == TetrisState.NewBlock){ // 땅에 닿는 순간에는 곧장 newblock으로 바뀌기 때문에 randnum도 같이 담아서 보내준다 -> 백에서도 s키로 땅에 닿자마자 randnum를 활용하게 설계해놓음
+                    var randnum = Math.floor(Math.random() * 7);//클라이언트가 랜덤넘버 생성
+                    myboard.state = myboard.accept(randnum.toString())//클라이언트의 로직 실행
+                    var chatMessage = {//서버에게 보낼 메시지
+                        sender: myName,//서버가 유저 판단하는 데 사용
+                        content: userkey,
+                        key: userkey,
+                        idxBT: randnum,//클라이언트가 생성한 랜덤넘버 보냄
+                    };
+                    console.log("10")
+                    console.log("여기 실행되나요~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+                    setDrawScreen(myboard!!.oScreen.get_array()) // 렌더링 코드
+                    stompClient!.send("/app/chat.send", {}, JSON.stringify(chatMessage))//컨트롤러의 chat.send로 매핑
+                    map.set(myName,myboard)
+                    break;
+                }
+                var chatMessage2 = {//서버에게 보낼 메시지 //땅에 닿기 전까지는 그냥 key만 보내고
                     sender: myName,
                     content: userkey,
                     key: userkey,
@@ -160,24 +161,20 @@ function App() {
                 stompClient!.send("/app/chat.send", {}, JSON.stringify(chatMessage2))
                 console.log(myboard.oScreen)
                 setDrawScreen(myboard!!.oScreen.get_array()) // 렌더링 코드
-                //setMyScreen(myboard.oScreen.get_array())
+                map.set(myName,myboard)
                 break;
             case TetrisState.Finished:
                 console.log("이미 종료된 보드")
                 setDrawScreen(myboard!!.oScreen.get_array()) // 렌더링 코드
-                //setMyScreen(myboard.oScreen.get_array())
+                //setMyScreen(myboard.oScreen.get_array())s
                 break;
             default:
                 setDrawScreen(myboard!!.oScreen.get_array()) // 렌더링 코드
                 console.log("wrong state----")
                 return;
         }
-        //
-        // DisplayBLK(myName)
-
-
-
-    }, [userkey, keyPressedCnt])
+    }, [keyPressedCnt]) //end of UseEffect()
+ 
 
     const getPrevUsers = (payload: { body: string; }) => {
         //먼저 온 사람의 존재를 모르기 때문에 서버로부터 map으로 먼저 온 사람들의 randnum으로 보드 객체 생성
@@ -200,6 +197,7 @@ function App() {
                 console.log("randnum:", message.oneTimeUseMap[x])
                 console.log(board)
                 map.set(x, board)
+                setDrawScreen(board!!.oScreen.get_array())
             }
         )
     }
@@ -210,8 +208,37 @@ function App() {
         var user = message.sender;
         var key = message.key;
         var board: CTetris | undefined = map.get(user);
+        //
+        var isfinished = message.alert;
+        
+        if(isfinished == 'finished' || isfinished =='game quit'){
+                // alert(user+' is dead')
+            
+            var dead= board
+            var tmp = board?.oScreen.get_array()
+            for (let i=0; i<dead!.oScreen!.get_dx(); i++){
+                for (let j=0; j<dead!.oScreen.get_dy(); j++){
+
+                    if (dead!.oScreen.get_array()[i][j]==0){
+                        console.log("white WHITE")
+                        tmp![i][j] = 100
+                    }
+                    else{
+                        tmp![i][j] = dead!.oScreen.get_array()[i][j]
+                    }
+                }
+            }
+            board!.state =TetrisState.Finished//중요
+            dead!.oScreen = new Matrix(tmp!)
+            map.set(user,dead!)
+            console.log(dead?.oScreen.get_array)
+
+            setDrawScreen(dead!!.oScreen.get_array())  
+        }
+    
+        //
         if (myName == user) { //본인은 서버에서 온 message를 수신할 필요가 없음 (이미 useeffect로 로직은 돌아간 상태)
-            console.log("내가 보낸 메시지는 나는 다시 수신할 필요가 없지요");
+                //     console.log("내가 보낸 메시지는 나는 다시 수신할 필요가 없지요");
             setDrawScreen(board!!.oScreen.get_array()) // 렌더링 코드
             return;
         }
@@ -272,23 +299,8 @@ function App() {
                 console.log("wrong key");
                 break;
         }
-    }
-    // useEffect(() => {
-    //     var myboard = map.get(name);
-    //     let blkList: any = [[]];
+    }//end of onMessageReceived()
 
-    //     if (myboard != undefined) {
-    //         var outputDisplay = myboard!.oScreen!.get_array();
-    //         blkList = outputDisplay.map((row: number[]) => (
-    //             <div className="row">
-    //                 {row.map((blk) => (
-    //                     <Display blk={blk} />
-    //                 ))}
-    //             </div>
-    //         ));
-    //     }
-    //     return <div className="myBoard">{blkList}</div>;
-    // }, [])
     const DisplayBLK = (props: any) => {
         var myboard = map.get(props.name);
         let blkList: any = [[]];
@@ -303,29 +315,48 @@ function App() {
                 </div>
             ));
         }
-        return <div className="myBoard">{blkList}</div>;
+        return (
+                <>  
+                <div className='eachUser'>   
+                    <p className='userName'>{props.name}</p>
+                    <div className="myBoard" >{blkList}</div>
+                </div> 
+                </>
+        )
+        
     } 
 
     return (
         <>
-            <h1><Title /></h1>
-            <h1>Press any key to start</h1>
-            <form onSubmit={getUserName}>
-                <label>
-                    Name: <input type="text" name='namefield' />
-                </label>
-                <input type="submit" value="Submit" />
-            </form>
-            <input onChange={onChangeKey}></input>
+            <div className='Header'>
+                <h1><Title /></h1>
+                <h1>Press any key to start</h1>
+                <form onSubmit={getUserName}>
+                    <label>
+                        Name: <input type="text" name='namefield' />
+                    </label>
+                    <input type="submit" value="Submit" />
+                </form>
+                <input onChange={onChangeKey}></input>
+            </div>
 
-            {/* <div className='gamescreen'>
-                <div>
-                    <OppositeScreen />
+            <div className='mine'>
+                <OppositeScreen text="나의 테트리스"/>
+                <DisplayBLK name={myName} />
+            </div>
+
+            <div className='Others'>
+                <div className='gamescreen'>
+                    <div>
+                        <OppositeScreen text="상대 테트리스"/>
+                    </div>
+
+                </div> 
+
+                <div className='otherBoards'>
+                {Array.from(map.keys()).filter((name) => name != myName).map((name) => (<DisplayBLK name={name} />))}
                 </div>
-
-            </div> */}
-            <DisplayBLK name={myName} />
-            {Array.from(map.keys()).filter((name) => name != myName).map((name) => (<DisplayBLK name={name} />))}
+            </div>
         </>
     )
 

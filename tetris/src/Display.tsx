@@ -20,17 +20,18 @@ const Display = (props:any) => {
         case 70: color = "pink"; break;
         case 0: color="white"; break;
         case 1: color = "black"; break;
+        case 100: color='grey';break;
         default : color= "black"; break;
     }
 
     
-
+    
     return (
         <>
         
         <svg style={
-            {width:"24",
-            height:"24",
+            {width:"24px",
+            height:"24px",
             marginRight:"5px",
              backgroundColor:color}
             }>
