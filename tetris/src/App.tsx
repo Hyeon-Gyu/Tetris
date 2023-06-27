@@ -209,7 +209,7 @@ function App() {
         //
         var isfinished = message.alert;
         
-        if(isfinished == 'finished'){
+        if(isfinished == 'finished' || isfinished =='game quit'){
                 // alert(user+' is dead')
             
             var dead= board
@@ -226,7 +226,7 @@ function App() {
                     }
                 }
             }
-            board!.state =TetrisState.Finished
+            board!.state =TetrisState.Finished//중요
             dead!.oScreen = new Matrix(tmp!)
             map.set(user,dead!)
             console.log(dead?.oScreen.get_array)
