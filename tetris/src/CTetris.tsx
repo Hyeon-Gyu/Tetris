@@ -79,9 +79,14 @@ export class CTetris extends Tetris{
         this.oScreen.paste(tmpblk,this.inboard.top,this.inboard.left) // inboard연산 결과랑 동일한 위치에 tmpblk를 oscreen에 붙이기
         if(this.inboard.state == TetrisState.NewBlock){ //inboard state에서 새로운 블록이 필요하다면 oscreen에서도 deleteline 검사를 해줘야한다.
             this.oScreen = this.deleteFullLines(this.oScreen, ncurrBlk, this.inboard.top, this.inboard.iScreenDy,this.inboard.iScreenDx, this.inboard.get_iScreenDw())
+            console.log("여기 진행은 되는건가1")
             this.back.oScreen = new Matrix(this.oScreen) //줄이 지워진다면 배경 정보 업데이트 해줘야함. 줄이 안지워져도 업데이트는 이루어져야한다.
         }
         this.state = this.inboard.state
+        this.top = this.inboard.top
+        this.left = this.inboard.left
+        this.idxBlockType = this.inboard.idxBlockType
+        this.idxBlockDegree = this.inboard.idxBlockDegree
         return this.state
     }
 }

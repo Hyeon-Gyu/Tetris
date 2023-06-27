@@ -135,11 +135,7 @@ function App() {
                 if(myboard.state == TetrisState.NewBlock){ // 땅에 닿는 순간에는 곧장 newblock으로 바뀌기 때문에 randnum도 같이 담아서 보내준다 -> 백에서도 s키로 땅에 닿자마자 randnum를 활용하게 설계해놓음
                     var randnum = Math.floor(Math.random() * 7);//클라이언트가 랜덤넘버 생성
                     myboard.state = myboard.accept(randnum.toString())//클라이언트의 로직 실행
-<<<<<<< HEAD
-                        var chatMessage = {//서버에게 보낼 메시지 
-=======
                         var chatMessage = {//서버에게 보낼 메시지
->>>>>>> 2c05db68ba52227602c1dd16328105ebdce38fc9
                         sender: myName,//서버가 유저 판단하는 데 사용
                         content: userkey,
                         key: userkey,
