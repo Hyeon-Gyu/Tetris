@@ -45,6 +45,7 @@ class ChatController {
     @MessageMapping("/chat.send")
     @SendTo("/topic/public")
     fun sendMessage(@Payload chatMessage: ChatMessage): ChatMessage {
+        println(chatMessage)
         var sender = chatMessage.sender //보낸사람 확인
         print("game running on $sender side")
         println()
