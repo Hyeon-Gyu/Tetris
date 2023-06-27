@@ -6,7 +6,10 @@ class ChatMessage {
     var sender: String? = null
     var idxBT: String? = null
     var alert:String? = null
-    var clientTetrisMap:MutableMap<String,CTetris>? = null
+
+    var oneTimeUseMap:MutableMap<String,String>? = null
+
+
     enum class MessageType {
         CHAT, LEAVE, JOIN
     }

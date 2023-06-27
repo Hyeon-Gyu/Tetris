@@ -94,6 +94,11 @@ class CTetris
             back.oScreen = Matrix(oScreen) //줄이 지워진다면 배경 정보 업데이트 해줘야함. 줄이 안지워져도 업데이트는 이루어져야한다.
         }
         state = inboard.state
+        top = inboard.top
+        left = inboard.left
+        idxBlockType = inboard.idxBlockType
+        idxBlockDegree = inboard.idxBlockDegree
+
         return state
     }
 }
