@@ -8,20 +8,26 @@ export class CTetris extends Tetris{
     private inboard = new Tetris(15,10)
     private back = new Tetris(15,10)
 
-    override deleteFullLines(screen: Matrix, blk: Matrix, top: number, dy: number, dx: number, dw: number): Matrix {
+    deleteFullLines(screen: Matrix, blk: Matrix, top: number, dy: number, dx: number, dw: number): Matrix {
+        console.log("ctetris deletefullline func")
         var line:Matrix; var zero:Matrix; var temp:Matrix
+        console.log("ctetris blk **********")
+        console.log(blk)
         if(blk == null) return screen
         var cy:number; var y:number; var nDeleted:number = 0; var nScanned:number = blk.get_dy()
         if(top + blk.get_dy() - 1 >= dy)
             nScanned -= (top + blk.get_dy() - dy)
         zero = new Matrix(1,dx)
-        for(y = nScanned-1; y < 0; y--){
+        for(y = nScanned-1; y >= 0; y--){
             cy = top + y + nDeleted
             line = screen.clip(cy,0,cy+1,screen.get_dx())
+            console.log("================ line.int2bool.sum 값",line.int2bool().sum())
+            console.log("*************screen getdx()값",screen.get_dx())
             if(line.int2bool().sum() == screen.get_dx()){
                 temp = screen.clip(0,0,cy,screen.get_dx())
                 screen.paste(temp,1,0)
                 screen.paste(zero,0,dw)
+                console.log("dw 값이 4가 나와야하는데 몇이 나올까",dw)
                 nDeleted++
             }
         }
@@ -79,8 +85,11 @@ export class CTetris extends Tetris{
         this.oScreen.paste(tmpblk,this.inboard.top,this.inboard.left) // inboard연산 결과랑 동일한 위치에 tmpblk를 oscreen에 붙이기
         if(this.inboard.state == TetrisState.NewBlock){ //inboard state에서 새로운 블록이 필요하다면 oscreen에서도 deleteline 검사를 해줘야한다.
             this.oScreen = this.deleteFullLines(this.oScreen, ncurrBlk, this.inboard.top, this.inboard.iScreenDy,this.inboard.iScreenDx, this.inboard.get_iScreenDw())
-            console.log("여기 진행은 되는건가1")
+            console.log("ctetris delefull line 함수 종료 후 this.oscreen")
+            console.log(this.oScreen)
             this.back.oScreen = new Matrix(this.oScreen) //줄이 지워진다면 배경 정보 업데이트 해줘야함. 줄이 안지워져도 업데이트는 이루어져야한다.
+            console.log("this.back.oscreen 화면")
+            console.log(this.back.oScreen)
         }
         this.state = this.inboard.state
         this.top = this.inboard.top
