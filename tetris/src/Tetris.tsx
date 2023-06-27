@@ -218,7 +218,7 @@ export class Tetris {
             this.currBlk = Tetris.setOfBlockObjects[this.idxBlockType][this.idxBlockDegree];
             this.top = 0;
             this.left = Tetris.iScreenDw + this.iScreenDx / 2 - (this.currBlk.get_dx()+1) / 2;
-            this.left = Math.floor(this.left);
+            this.left = Math.floor(this.left+0.5);
             tempBlk = this.iScreen.clip(this.top, this.left, this.top+this.currBlk.get_dy(), this.left+this.currBlk.get_dx());
             tempBlk = tempBlk.add(this.currBlk);
             this.oScreen.paste(this.iScreen, 0, 0);
