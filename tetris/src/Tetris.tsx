@@ -238,13 +238,10 @@ export class Tetris {
                 tempBlk = tempBlk.add(this.currBlk);
                 if (tempBlk.anyGreaterThan(1)) {
                     this.state = TetrisState.NewBlock;
-                    this.top -=1;
                 }
-                else{
-                    this.top -=1;
-                    tempBlk = this.iScreen.clip(this.top, this.left, this.top+this.currBlk.get_dy(), this.left+this.currBlk.get_dx());
-                    tempBlk = tempBlk.add(this.currBlk);
-                }
+
+                this.top -=1;
+
                 tempBlk = this.iScreen.clip(this.top, this.left, this.top+this.currBlk.get_dy(), this.left+this.currBlk.get_dx());
                 tempBlk = tempBlk.add(this.currBlk);
                 break;
