@@ -69,7 +69,7 @@ export class Tetris {
         Tetris.nBlockTypes = setOfBlockArrays.length;
         Tetris.nBlockDegrees = setOfBlockArrays[0].length;
         Tetris.setOfBlockObjects = Tetris.createSetOfBlocks(setOfBlockArrays);
-        Tetris.iScreenDw = Tetris.findLargestBlockSize(setOfBlockArrays);
+        //Tetris.iScreenDw = Tetris.findLargestBlockSize(setOfBlockArrays);
     }
     
 
@@ -118,10 +118,15 @@ export class Tetris {
         for(let y = nScanned - 1; y >= 0; y--){
             cy = top + y + nDeleted;
             line = screen.clip(cy,0,cy+1,screen.get_dx());
+            console.log("******",line.sum())
+            console.log("======================",screen.get_dx())
             if (line.sum() === screen.get_dx()) {
                 temp = screen.clip(0, 0, cy, screen.get_dx());
                 screen.paste(temp, 1, 0); 
                 screen.paste(zero, 0, dw);
+                console.log("-------------------")
+                console.log(screen)
+                console.log("-------------------")
                 nDeleted++;
             }
         }
@@ -207,9 +212,10 @@ export class Tetris {
     }*/
 
     accept(key: string): TetrisState {
-        
         let tempBlk:Matrix;
+        console.log("4")
         if(this.state === TetrisState.NewBlock){
+            console.log("deletefull lines 함수 전 ------------------------------")
             this.oScreen = this.deleteFullLines(this.oScreen, this.currBlk, this.top, this.iScreenDy, this.iScreenDx, Tetris.iScreenDw);
             this.iScreen.paste(this.oScreen, 0, 0);
             this.state = TetrisState.Running;

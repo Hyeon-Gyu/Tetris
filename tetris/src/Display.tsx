@@ -20,6 +20,7 @@ const Display = (props:any) => {
         case 70: color = "pink"; break;
         case 0: color="white"; break;
         case 1: color = "black"; break;
+        case 100: color='grey';break;
         default : color= "black"; break;
     }
 

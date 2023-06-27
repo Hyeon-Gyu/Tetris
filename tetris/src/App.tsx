@@ -11,6 +11,7 @@ import { Client, Message, Stomp } from '@stomp/stompjs';
 import Display from './Display'
 import { displayPartsToString } from 'typescript';
 
+import Matrix from './Matrix';
 
 function Title(props: any) {
     return (
@@ -109,7 +110,7 @@ function App() {
             };
             stompClient!.send("/app/chat.send", {}, JSON.stringify(chatMessageQuit))
         }
-        console.log("here")
+        console.log("1")
         //myboard.state = myboard.accept(userkey)
         switch (myboard.state) {
             case TetrisState.NewBlock:
@@ -129,18 +130,22 @@ function App() {
                 stompClient!.send("/app/chat.send", {}, JSON.stringify(chatMessage))//컨트롤러의 chat.send로 매핑
                 break;
             case TetrisState.Running:
+                console.log("2")
                 myboard.state = myboard.accept(userkey)
+                console.log("9")
                 console.log("내보드 running 처음진입 상태 :",myboard.state)
                 console.log("key to send:", userkey)
                 if(myboard.state == TetrisState.NewBlock){ // 땅에 닿는 순간에는 곧장 newblock으로 바뀌기 때문에 randnum도 같이 담아서 보내준다 -> 백에서도 s키로 땅에 닿자마자 randnum를 활용하게 설계해놓음
                     var randnum = Math.floor(Math.random() * 7);//클라이언트가 랜덤넘버 생성
                     myboard.state = myboard.accept(randnum.toString())//클라이언트의 로직 실행
-                        var chatMessage = {//서버에게 보낼 메시지
+                    var chatMessage = {//서버에게 보낼 메시지
                         sender: myName,//서버가 유저 판단하는 데 사용
                         content: userkey,
                         key: userkey,
                         idxBT: randnum,//클라이언트가 생성한 랜덤넘버 보냄
                     };
+                    console.log("10")
+                    console.log("여기 실행되나요~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
                     setDrawScreen(myboard!!.oScreen.get_array()) // 렌더링 코드
                     stompClient!.send("/app/chat.send", {}, JSON.stringify(chatMessage))//컨트롤러의 chat.send로 매핑
                     map.set(myName,myboard)
@@ -203,9 +208,32 @@ function App() {
         var board: CTetris | undefined = map.get(user);
         //
         var isfinished = message.alert;
+        
         if(isfinished == 'finished'){
-                alert(user+' is dead')
+                // alert(user+' is dead')
+            
+            var dead= board
+            var tmp = board?.oScreen.get_array()
+            for (let i=0; i<dead!.oScreen!.get_dx(); i++){
+                for (let j=0; j<dead!.oScreen.get_dy(); j++){
+
+                    if (dead!.oScreen.get_array()[i][j]==0){
+                        console.log("white WHITE")
+                        tmp![i][j] = 100
+                    }
+                    else{
+                        tmp![i][j] = dead!.oScreen.get_array()[i][j]
+                    }
+                }
+            }
+            board!.state =TetrisState.Finished
+            dead!.oScreen = new Matrix(tmp!)
+            map.set(user,dead!)
+            console.log(dead?.oScreen.get_array)
+
+            setDrawScreen(dead!!.oScreen.get_array())  
         }
+    
         //
         if (myName == user) { //본인은 서버에서 온 message를 수신할 필요가 없음 (이미 useeffect로 로직은 돌아간 상태)
                 //     console.log("내가 보낸 메시지는 나는 다시 수신할 필요가 없지요");
