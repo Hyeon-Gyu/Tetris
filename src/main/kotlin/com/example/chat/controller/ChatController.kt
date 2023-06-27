@@ -13,7 +13,6 @@ import org.springframework.messaging.handler.annotation.SendTo
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor
 import org.springframework.stereotype.Controller
 import java.util.*
-import kotlin.collections.HashMap
 
 
 @Controller
@@ -114,7 +113,7 @@ fun handleNewBlock(board: CTetris,chatMessage: ChatMessage):ChatMessage{
     board.printScreen()
     println()
     if(board.state == TetrisState.Finished){
-        chatMessage.alert = "game end"
+        chatMessage.alert = "finished"
         clientTetrisMap[chatMessage.sender!!] = board
         return chatMessage
     }
