@@ -37,3 +37,24 @@
   }
 }
 */
+
+.eachUser{
+  float:left;
+  /* width:50%; */
+  padding-right:1px;
+}
+
+.mine{
+  float:left;
+  width:50%;
+}
+
+.Others{
+  float:left;
+  width:50%;  
+}
+
+.userName{
+  font-size: 30px;
+  font-weight: bold;
+}

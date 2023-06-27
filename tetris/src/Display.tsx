@@ -30,8 +30,8 @@ const Display = (props:any) => {
         <>
         
         <svg style={
-            {width:"24",
-            height:"24",
+            {width:"24px",
+            height:"24px",
             marginRight:"5px",
              backgroundColor:color}
             }>

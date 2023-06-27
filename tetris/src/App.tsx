@@ -12,6 +12,7 @@ import Display from './Display'
 import { displayPartsToString } from 'typescript';
 
 import Matrix from './Matrix';
+import "./App.css"
 
 function Title(props: any) {
     return (
@@ -24,7 +25,7 @@ function Title(props: any) {
 function OppositeScreen(props: any) {
     return (
         <div className="OppositeScreen">
-            <h1>상대 테트리스</h1>
+            <h1>{props.text}</h1>
         </div>
     )
 }
@@ -314,9 +315,11 @@ function App() {
             ));
         }
         return (
-                <>      
-                <h3>{props.name}</h3>
-                <div className="myBoard">{blkList}</div>
+                <>  
+                <div className='eachUser'>   
+                    <p className='userName'>{props.name}</p>
+                    <div className="myBoard" >{blkList}</div>
+                </div> 
                 </>
         )
         
@@ -324,26 +327,35 @@ function App() {
 
     return (
         <>
-            <h1><Title /></h1>
-            <h1>Press any key to start</h1>
-            <form onSubmit={getUserName}>
-                <label>
-                    Name: <input type="text" name='namefield' />
-                </label>
-                <input type="submit" value="Submit" />
-            </form>
-            <input onChange={onChangeKey}></input>
+            <div className='Header'>
+                <h1><Title /></h1>
+                <h1>Press any key to start</h1>
+                <form onSubmit={getUserName}>
+                    <label>
+                        Name: <input type="text" name='namefield' />
+                    </label>
+                    <input type="submit" value="Submit" />
+                </form>
+                <input onChange={onChangeKey}></input>
+            </div>
 
+            <div className='mine'>
+                <OppositeScreen text="나의 테트리스"/>
+                <DisplayBLK name={myName} />
+            </div>
 
-            <DisplayBLK name={myName} />
-            
-            <div className='gamescreen'>
-                <div>
-                    <OppositeScreen />
+            <div className='Others'>
+                <div className='gamescreen'>
+                    <div>
+                        <OppositeScreen text="상대 테트리스"/>
+                    </div>
+
+                </div> 
+
+                <div className='otherBoards'>
+                {Array.from(map.keys()).filter((name) => name != myName).map((name) => (<DisplayBLK name={name} />))}
                 </div>
-
-            </div> 
-            {Array.from(map.keys()).filter((name) => name != myName).map((name) => (<DisplayBLK name={name} />))}
+            </div>
         </>
     )
 
