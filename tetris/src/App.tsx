@@ -7,7 +7,6 @@ import "./screen.css";
 import * as StompJs from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 import { Client, Message, Stomp } from '@stomp/stompjs';
-import Matrix from './Matrix';
 
 import Display from './Display'
 import { displayPartsToString } from 'typescript';
@@ -30,57 +29,11 @@ function OppositeScreen(props: any) {
 }
 
 
-function printColor(value: number) {
-    switch (value) {
-        case 1:
-            return 'black';
-        case 0:
-            return 'white';
-        case 10:
-            return 'pink';
-        case 20:
-            return 'green';
-        case 30:
-            return 'yellow';
-        case 40:
-            return 'red';
-        case 50:
-            return 'blue';
-        case 60:
-            return 'purple';
-        case 70:
-            return 'brown';
-    }
-}
-
 
 
 var map: Map<string, CTetris> = new Map();
 var stompClient: StompJs.CompatClient | null = null;
 var myName: string;
-
-
-
-// function DisplayBLK(props: any) {
-//     var myboard = map.get(props.name)
-//     var blkList: any = [[]]
-
-//     if (myboard != undefined) {
-//         const outputDisplay = myboard!.oScreen!.get_array()
-//         for (var i = 0; i < myboard!.oScreen.get_dy(); i++) {
-//             blkList[i] = outputDisplay[i].map((blk) => (<Display blk={blk} />))
-//         }
-//     }
-
-
-//     return (
-//         <div className='myBoard'>
-//             {blkList.map((line: any) => (<div>{line}</div>))}
-//         </div>
-//     );
-
-// }
-
 
 function App() {
 
@@ -139,7 +92,7 @@ function App() {
         }
     }
 
-    useEffect(() => {//useLayoutEffect()를 활용하여 컴포넌트 렌더링 - useLayoutEffect 실행 - 화면 업데이트 순으로 effect를 실행시킬 수 있다.
+    useEffect(() => {
         var myboard = map.get(myName)
         if (typeof myboard === "undefined") {
             console.log("myboard undefined");
@@ -147,6 +100,7 @@ function App() {
         }
         if (userkey == 'q') {
             myboard.state = TetrisState.Finished
+            setDrawScreen(myboard!!.oScreen.get_array()) // 렌더링 코드
             var chatMessageQuit = {//서버에게 보낼 메시지
                 sender: myName,
                 content: userkey,
@@ -169,6 +123,7 @@ function App() {
                     idxBT: randnum,//클라이언트가 생성한 랜덤넘버 보냄
                 };
                 console.log(myboard.oScreen)
+                setDrawScreen(myboard!!.oScreen.get_array()) // 렌더링 코드
                 //setMyScreen(myboard.oScreen.get_array())
                 stompClient!.send("/app/chat.send", {}, JSON.stringify(chatMessage))//컨트롤러의 chat.send로 매핑
                 break;
@@ -181,25 +136,22 @@ function App() {
                 };
                 stompClient!.send("/app/chat.send", {}, JSON.stringify(chatMessage2))
                 console.log(myboard.oScreen)
+                setDrawScreen(myboard!!.oScreen.get_array()) // 렌더링 코드
                 //setMyScreen(myboard.oScreen.get_array())
                 break;
             case TetrisState.Finished:
                 console.log("이미 종료된 보드")
+                setDrawScreen(myboard!!.oScreen.get_array()) // 렌더링 코드
                 //setMyScreen(myboard.oScreen.get_array())
                 break;
             default:
+                setDrawScreen(myboard!!.oScreen.get_array()) // 렌더링 코드
                 console.log("wrong state----")
                 return;
         }
-        //
-        // DisplayBLK(myName)
 
-
-
-    }, [userkey,keyPressedCnt])
-
-
-
+    }, [keyPressedCnt]) //end of UseEffect()
+ 
 
     const getPrevUsers = (payload: { body: string; }) => {
         //먼저 온 사람의 존재를 모르기 때문에 서버로부터 map으로 먼저 온 사람들의 randnum으로 보드 객체 생성
@@ -222,6 +174,7 @@ function App() {
                 console.log("randnum:", message.oneTimeUseMap[x])
                 console.log(board)
                 map.set(x, board)
+                setDrawScreen(board!!.oScreen.get_array())
             }
         )
     }
@@ -231,12 +184,13 @@ function App() {
         console.log(message)
         var user = message.sender;
         var key = message.key;
+        var board: CTetris | undefined = map.get(user);
         if (myName == user) { //본인은 서버에서 온 message를 수신할 필요가 없음 (이미 useeffect로 로직은 돌아간 상태)
-            console.log("내가 보낸 메시지는 나는 다시 수신할 필요가 없지요");
+                //     console.log("내가 보낸 메시지는 나는 다시 수신할 필요가 없지요");
+            setDrawScreen(board!!.oScreen.get_array()) // 렌더링 코드
             return;
         }
-        var board: CTetris | undefined = map.get(user);
-        //console.log(board?.oScreen.get_array())
+
         if (typeof board === "undefined") {
             console.log("Board not found for user:", user);
             return;
@@ -293,25 +247,24 @@ function App() {
                 console.log("wrong key");
                 break;
         }
-    }
+    }//end of onMessageReceived()
 
     const DisplayBLK = (props: any) => {
         var myboard = map.get(props.name);
         let blkList: any = [[]];
-      
+
         if (myboard != undefined) {
-          var outputDisplay = myboard!.oScreen!.get_array();
-          blkList = outputDisplay.map((row: number[]) => (
-            <div className="row">
-              {row.map((blk) => (
-                <Display blk={blk} />
-              ))}
-            </div>
-          ));
+            var outputDisplay = myboard!.oScreen!.get_array();
+            blkList = outputDisplay.map((row: number[]) => (
+                <div className="row">
+                    {row.map((blk) => (
+                        <Display blk={blk} />
+                    ))}
+                </div>
+            ));
         }
         return <div className="myBoard">{blkList}</div>;
-      }
-
+    } 
 
     return (
         <>
