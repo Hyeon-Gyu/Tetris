@@ -22,6 +22,7 @@ class ChatController {
         var random = Random()
         var clientTetrisMap:MutableMap<String, CTetris> = HashMap()
         var oneTimeUseMap:MutableMap<String, String> = HashMap()
+        var peoplecount: Int = 0
     }
 
     @MessageMapping("/chat.register") //login 창
@@ -40,6 +41,12 @@ class ChatController {
         clientTetrisMap[chatMessage.sender!!] = board //hashmap에 board instance 저장
 
         chatMessage.oneTimeUseMap = oneTimeUseMap
+        peoplecount += 1
+        
+        if (peoplecount == 3)
+            chatMessage.peoplecount = "Start"
+        else
+            chatMessage.peoplecount = "Stop"
 
         return chatMessage
     }
