@@ -42,7 +42,7 @@ function App() {
     const [userkey, setKey] = useState('');
 
     const getUserName = (e: any) => {
-        alert("알림이 뜰 때까지 기다려주세요.")
+        // alert("알림이 뜰 때까지 기다려주세요.")
         e.preventDefault()
         console.log('get user name called')
         console.log("username:", e.target.namefield.value)
@@ -68,6 +68,7 @@ function App() {
         console.log("username to be send:", myName)//state로 초기화하는 변수인 username썼더니 null exception떠서 새로만든변수
         stompClient!.subscribe('/topic/public', onMessageReceived);//메시지를 받으면 onMessageReceived호출
         stompClient!.subscribe('/topic/prevuser', getPrevUsers);
+        stompClient!.subscribe('/topic/resetgame', resetGame);
         
         var randnum = Math.floor(Math.random() * 7);//클라이언트에서 랜덤넘버 생성
         console.log(randnum)
@@ -97,9 +98,7 @@ function App() {
             }
         }
 
-        else{
-            e.target.value = ''
-        }
+        
     }
 
     useEffect(() => {
@@ -217,7 +216,7 @@ function App() {
         console.log(message)
         var user = message.sender;
         var key = message.key;
-        resetGame(message.resetGame)
+        // resetGame(message.resetGame)
         var board: CTetris | undefined = map.get(user);
  
         var isfinished = message.alert;
@@ -341,30 +340,57 @@ function App() {
 
     const [text,setText] = useState('');
 
-    const resetGame = (reset:boolean) => {
-        
-        if(reset==true){
+    
+    const resetGame = (payload: { body: string; }) => {
+        var message = JSON.parse(payload.body);
+
+        if(message.resetGame==true){
             console.log('게임 한 판 끝남')
             map= new Map();
             setText('');
             setDrawScreen([[]])
-            
+            const btn = document.getElementById('btn');
+            if(btn!.style.visibility !== 'visible') {
+
+                btn!.style.visibility = 'visible';
+        
+            }
         }
         
     }
+    
 
+    const increaseCnt= () => {
+        var chatMessageReset = {//서버에게 보낼 메시지
+            click : true
+        };
+        stompClient!.send("/app/chat.reset", {}, JSON.stringify(chatMessageReset))
+
+        const btn = document.getElementById('btn');
+        if(btn!.style.visibility !== 'hidden') {
+
+            btn!.style.visibility = 'hidden';
+    
+          }
+    }
     return (
         <>
             <div className='Header'>
                 <h1><Title /></h1>
-                <h1>Press any key to start</h1>
+                <h1>이름을 입력하여 준비하세요</h1>
+                <form onClick={increaseCnt}>
+                    <button type="button" id='btn'>새로운 게임 시작하기</button>
+                </form>
+                <hr></hr>
                 <form onSubmit={getUserName}>
-                    <label>
+                    <label className='inputguide'>
                         Name: <input type="text" name='namefield' className='input-text' />
                     </label>
-                    <input type="submit" value="Submit" />
+                    <input type="submit" value="Submit" id='namesubmit'/>
                 </form>
-                <input onChange={onChangeKey} className='input-text' value={text}></input>
+                <div className='inputguide'>
+                Key: <input onChange={onChangeKey} className='input-text' value={text}></input>
+                </div>
             </div>
 
             <div className='mine'>
@@ -383,6 +409,7 @@ function App() {
                 {Array.from(map.keys()).filter((name) => name != myName).map((name) => (<DisplayBLK name={name} />))}
                 </div>
             </div>
+            
         </>
     )
 
