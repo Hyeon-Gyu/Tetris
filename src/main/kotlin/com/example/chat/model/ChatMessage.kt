@@ -11,6 +11,7 @@ class ChatMessage {
     var peoplecount: String? = null
 
     var resetGame:Boolean = false
+    var resetCount:Int=0
 
 
     enum class MessageType {

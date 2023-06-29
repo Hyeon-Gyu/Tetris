@@ -23,6 +23,7 @@ class ChatController {
         var clientTetrisMap:MutableMap<String, CTetris> = HashMap()
         var oneTimeUseMap:MutableMap<String, String> = HashMap()
         var peoplecount: Int = 0
+        var resetCnt:Int = 0
     }
 
     @MessageMapping("/chat.register") //login 창
@@ -39,7 +40,6 @@ class ChatController {
         board.printScreen()
         oneTimeUseMap[chatMessage.sender!!] = initKey //초기 생성 랜덤 숫자를 저장, ctetris 객체를 저장하지말고
         clientTetrisMap[chatMessage.sender!!] = board //hashmap에 board instance 저장
-
         chatMessage.oneTimeUseMap = oneTimeUseMap
         peoplecount += 1
         
@@ -77,7 +77,6 @@ class ChatController {
                 }
             }
             TetrisState.NewBlock -> {
-                chatMessage.resetGame = setReset()
                 return handleNewBlock(board,chatMessage)
             }
             else -> {
@@ -89,12 +88,28 @@ class ChatController {
 
     }
 
-}
-fun setReset():Boolean{
-    var board = clientTetrisMap["aaa"]//테스트용
+    @MessageMapping("/chat.reset")
+    @SendTo("/topic/resetgame")
+    fun increaseCnt():ChatMessage?{
+        resetCnt +=1
+        var chatMessage:ChatMessage = ChatMessage()
 
-    return board!!.state==TetrisState.Finished
+        if(resetCnt==3){
+            clientTetrisMap = HashMap()
+            oneTimeUseMap = HashMap()
+            peoplecount=0
+            resetCnt=0
+            chatMessage.resetGame=true
+            return chatMessage
+        }
+        return null
+    }
+
+
+
+
 }
+
 private fun handleQuit(board:CTetris,chatMessage: ChatMessage): ChatMessage {
     board.printScreen()
     println("current board id: $board")
@@ -108,7 +123,7 @@ private fun handleQuit(board:CTetris,chatMessage: ChatMessage): ChatMessage {
      * sender: 'q'를 입력한 사용자
      * idxBT : NULL
      * alert : "game quit" */
-    chatMessage.resetGame = setReset()
+
     return chatMessage
 }
 
@@ -119,7 +134,6 @@ private fun handleRunning(board:CTetris, chatMessage: ChatMessage): ChatMessage 
         return handleNewBlock(board, chatMessage)
     }
     clientTetrisMap[chatMessage.sender!!] = board
-    chatMessage.resetGame = setReset()
     return chatMessage
 }
 
@@ -130,10 +144,8 @@ fun handleNewBlock(board: CTetris,chatMessage: ChatMessage):ChatMessage{
     if(board.state == TetrisState.Finished){
         chatMessage.alert = "finished"
         clientTetrisMap[chatMessage.sender!!] = board
-        chatMessage.resetGame = setReset()
         return chatMessage
     }
     clientTetrisMap[chatMessage.sender!!] = board
-    chatMessage.resetGame = setReset()
     return chatMessage
 }
