@@ -221,14 +221,11 @@ function App() {
         var board: CTetris | undefined = map.get(user);
  
         var isfinished = message.alert;
-<<<<<<< HEAD
         
         
        
         
-=======
 
->>>>>>> b2a4b5da834f52675251ddc89d36db316d124a2b
         if(isfinished == 'finished' || isfinished =='game quit'){
             var dead= board
             var tmp = board?.oScreen.get_array()
