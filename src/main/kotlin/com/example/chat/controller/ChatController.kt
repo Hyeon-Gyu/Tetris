@@ -70,6 +70,7 @@ class ChatController {
                 }
             }
             TetrisState.NewBlock -> {
+                chatMessage.resetGame = setReset()
                 return handleNewBlock(board,chatMessage)
             }
             else -> {
@@ -78,9 +79,15 @@ class ChatController {
                 return chatMessage
             }
         }
-    }
-}
 
+    }
+
+}
+fun setReset():Boolean{
+    var board = clientTetrisMap["aaa"]//테스트용
+
+    return board!!.state==TetrisState.Finished
+}
 private fun handleQuit(board:CTetris,chatMessage: ChatMessage): ChatMessage {
     board.printScreen()
     println("current board id: $board")
@@ -94,6 +101,7 @@ private fun handleQuit(board:CTetris,chatMessage: ChatMessage): ChatMessage {
      * sender: 'q'를 입력한 사용자
      * idxBT : NULL
      * alert : "game quit" */
+    chatMessage.resetGame = setReset()
     return chatMessage
 }
 
@@ -104,6 +112,7 @@ private fun handleRunning(board:CTetris, chatMessage: ChatMessage): ChatMessage 
         return handleNewBlock(board, chatMessage)
     }
     clientTetrisMap[chatMessage.sender!!] = board
+    chatMessage.resetGame = setReset()
     return chatMessage
 }
 
@@ -114,8 +123,10 @@ fun handleNewBlock(board: CTetris,chatMessage: ChatMessage):ChatMessage{
     if(board.state == TetrisState.Finished){
         chatMessage.alert = "finished"
         clientTetrisMap[chatMessage.sender!!] = board
+        chatMessage.resetGame = setReset()
         return chatMessage
     }
     clientTetrisMap[chatMessage.sender!!] = board
+    chatMessage.resetGame = setReset()
     return chatMessage
 }

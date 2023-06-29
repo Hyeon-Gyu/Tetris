@@ -9,6 +9,8 @@ class ChatMessage {
 
     var oneTimeUseMap:MutableMap<String,String>? = null
 
+    var resetGame:Boolean = false
+
 
     enum class MessageType {
         CHAT, LEAVE, JOIN
