@@ -70,6 +70,7 @@ function App() {
         console.log("username to be send:", myName)//state로 초기화하는 변수인 username썼더니 null exception떠서 새로만든변수
         stompClient!.subscribe('/topic/public', onMessageReceived);//메시지를 받으면 onMessageReceived호출
         stompClient!.subscribe('/topic/prevuser', getPrevUsers);
+        
         var randnum = Math.floor(Math.random() * 7);//클라이언트에서 랜덤넘버 생성
         console.log(randnum)
         stompClient!.send("/app/chat.register",//서버에서 (유저-보드) 객체 생성하는 컨트롤러 주소
@@ -206,9 +207,13 @@ function App() {
         console.log(message)
         var user = message.sender;
         var key = message.key;
+        resetGame(message.resetGame)
         var board: CTetris | undefined = map.get(user);
-        //
+ 
         var isfinished = message.alert;
+        
+        
+       
         
         if(isfinished == 'finished' || isfinished =='game quit'){
                 // alert(user+' is dead')
@@ -325,6 +330,21 @@ function App() {
         
     } 
 
+
+    const [text,setText] = useState('');
+
+    const resetGame = (reset:boolean) => {
+        
+        if(reset==true){
+            console.log('게임 한 판 끝남')
+            map= new Map();
+            setText('');
+            setDrawScreen([[]])
+            
+        }
+        
+    }
+
     return (
         <>
             <div className='Header'>
@@ -332,11 +352,11 @@ function App() {
                 <h1>Press any key to start</h1>
                 <form onSubmit={getUserName}>
                     <label>
-                        Name: <input type="text" name='namefield' />
+                        Name: <input type="text" name='namefield' className='input-text' />
                     </label>
                     <input type="submit" value="Submit" />
                 </form>
-                <input onChange={onChangeKey}></input>
+                <input onChange={onChangeKey} className='input-text' value={text}></input>
             </div>
 
             <div className='mine'>
