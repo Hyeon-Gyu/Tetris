@@ -1,5 +1,11 @@
 package com.example.chat.model
 
+import lombok.Getter
+import lombok.Setter
+
+
+@Getter
+@Setter
 class ChatMessage {
     var content: String? = null
     var key:String? = null
@@ -8,7 +14,7 @@ class ChatMessage {
     var alert:String? = null
 
     var oneTimeUseMap:MutableMap<String,String>? = null
-    var peoplecount: String? = null
+    var readyOrStart: String? = null
 
     var resetGame:Boolean = false
     var resetCount:Int=0

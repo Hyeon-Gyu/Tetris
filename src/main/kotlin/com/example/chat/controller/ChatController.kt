@@ -22,8 +22,11 @@ class ChatController {
         var random = Random()
         var clientTetrisMap:MutableMap<String, CTetris> = HashMap()
         var oneTimeUseMap:MutableMap<String, String> = HashMap()
-        var peoplecount: Int = 0
-        var resetCnt:Int = 0
+        var member_count: Int = 0
+        var reset_Cnt:Int = 0
+
+        private const val MAX_MEMBER_COUNT = 3  /** 접속인원 3명으로 제한*/
+
     }
 
     @MessageMapping("/chat.register") //login 창
@@ -40,27 +43,18 @@ class ChatController {
         oneTimeUseMap[chatMessage.sender!!] = initKey //초기 생성 랜덤 숫자를 저장, ctetris 객체를 저장하지말고
         clientTetrisMap[chatMessage.sender!!] = board //hashmap에 board instance 저장
         chatMessage.oneTimeUseMap = oneTimeUseMap
-        peoplecount += 1
-        
-        if (peoplecount == 3)
-            chatMessage.peoplecount = "Start"
-        else
-            chatMessage.peoplecount = "Stop"
+        member_count ++
 
+        if(member_count == MAX_MEMBER_COUNT)
+            chatMessage.readyOrStart = "Start"
         return chatMessage
     }
 
     @MessageMapping("/chat.send")
     @SendTo("/topic/public")
     fun sendMessage(@Payload chatMessage: ChatMessage): ChatMessage {
-        println(chatMessage)
         var sender = chatMessage.sender //보낸사람 확인
-        print("game running on $sender side")
-        println()
-        print("key:${chatMessage.key}")
-        println()
         var board = clientTetrisMap[sender] //hash map에서 user name찾아서 board객체 찾아오기
-
         when(board!!.state){
             TetrisState.Finished -> {
                 print(" $sender board game over")
@@ -91,23 +85,18 @@ class ChatController {
     @MessageMapping("/chat.reset")
     @SendTo("/topic/resetgame")
     fun increaseCnt():ChatMessage?{
-        resetCnt +=1
+        reset_Cnt++
         var chatMessage:ChatMessage = ChatMessage()
-
-        if(resetCnt==3){
+        if(reset_Cnt== MAX_MEMBER_COUNT){
             clientTetrisMap = HashMap()
             oneTimeUseMap = HashMap()
-            peoplecount=0
-            resetCnt=0
+            member_count=0
+            reset_Cnt=0
             chatMessage.resetGame=true
             return chatMessage
         }
-        return null
+        return chatMessage //null로 보내면 아무동작도 안함, 왔던 message 그대로 담아서 보내주자 일단은..
     }
-
-
-
-
 }
 
 private fun handleQuit(board:CTetris,chatMessage: ChatMessage): ChatMessage {
