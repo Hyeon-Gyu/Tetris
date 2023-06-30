@@ -8,6 +8,10 @@ class ChatMessage {
     var alert:String? = null
 
     var oneTimeUseMap:MutableMap<String,String>? = null
+    var peoplecount: String? = null
+
+    var resetGame:Boolean = false
+    var resetCount:Int=0
 
 
     enum class MessageType {

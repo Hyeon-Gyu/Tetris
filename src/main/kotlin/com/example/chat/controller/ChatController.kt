@@ -22,6 +22,8 @@ class ChatController {
         var random = Random()
         var clientTetrisMap:MutableMap<String, CTetris> = HashMap()
         var oneTimeUseMap:MutableMap<String, String> = HashMap()
+        var peoplecount: Int = 0
+        var resetCnt:Int = 0
     }
 
     @MessageMapping("/chat.register") //login 창
@@ -37,8 +39,13 @@ class ChatController {
         board.printScreen()
         oneTimeUseMap[chatMessage.sender!!] = initKey //초기 생성 랜덤 숫자를 저장, ctetris 객체를 저장하지말고
         clientTetrisMap[chatMessage.sender!!] = board //hashmap에 board instance 저장
-
         chatMessage.oneTimeUseMap = oneTimeUseMap
+        peoplecount += 1
+        
+        if (peoplecount == 3)
+            chatMessage.peoplecount = "Start"
+        else
+            chatMessage.peoplecount = "Stop"
 
         return chatMessage
     }
@@ -78,7 +85,29 @@ class ChatController {
                 return chatMessage
             }
         }
+
     }
+
+    @MessageMapping("/chat.reset")
+    @SendTo("/topic/resetgame")
+    fun increaseCnt():ChatMessage?{
+        resetCnt +=1
+        var chatMessage:ChatMessage = ChatMessage()
+
+        if(resetCnt==3){
+            clientTetrisMap = HashMap()
+            oneTimeUseMap = HashMap()
+            peoplecount=0
+            resetCnt=0
+            chatMessage.resetGame=true
+            return chatMessage
+        }
+        return null
+    }
+
+
+
+
 }
 
 private fun handleQuit(board:CTetris,chatMessage: ChatMessage): ChatMessage {
@@ -94,6 +123,7 @@ private fun handleQuit(board:CTetris,chatMessage: ChatMessage): ChatMessage {
      * sender: 'q'를 입력한 사용자
      * idxBT : NULL
      * alert : "game quit" */
+
     return chatMessage
 }
 
