@@ -33,7 +33,7 @@ function OppositeScreen(props: any) {
 var map: Map<string, CTetris> = new Map();
 var stompClient: StompJs.CompatClient | null = null;
 var myName: string;
-var peoplecount: string;
+var readyOrStart: string;
 
 function App() {
 
@@ -82,7 +82,7 @@ function App() {
 
     const onChangeKey = (e: React.ChangeEvent<HTMLInputElement>) => {
 
-        if (peoplecount == "Start"){
+        if (readyOrStart == "Start"){
 
             console.log(myName)
             console.log("keyIn:" + e.target.value[e.target.value.length - 1])
@@ -184,7 +184,7 @@ function App() {
     const getPrevUsers = (payload: { body: string; }) => {
         //먼저 온 사람의 존재를 모르기 때문에 서버로부터 map으로 먼저 온 사람들의 randnum으로 보드 객체 생성
         var message = JSON.parse(payload.body);
-        peoplecount = message.peoplecount
+        readyOrStart = message.readyOrStart
         const mapIterator2 = Array.from(Object.keys(message.oneTimeUseMap)) // 서버에 저장되어있는 키 값들을 추출
         const mapIterator = Array.from(map.keys())
         mapIterator2.filter(
@@ -207,7 +207,7 @@ function App() {
             }
         )
         
-        if (peoplecount == "Start")
+        if (readyOrStart == "Start")
             alert("게임을 시작합니다.")
     }
 
