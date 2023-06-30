@@ -98,7 +98,6 @@ class CTetris
         left = inboard.left
         idxBlockType = inboard.idxBlockType
         idxBlockDegree = inboard.idxBlockDegree
-
         return state
     }
 }

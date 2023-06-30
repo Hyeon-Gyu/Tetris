@@ -25,7 +25,6 @@ class ChatController {
     }
 
     @MessageMapping("/chat.register") //login 창
-
     @SendTo("/topic/prevuser")
     fun register(@Payload chatMessage: ChatMessage, headerAccessor: SimpMessageHeaderAccessor): ChatMessage {
         headerAccessor.sessionAttributes!!["username"] = chatMessage.sender
