@@ -35,7 +35,6 @@ class ChatController {
         println()
         return chatMessage
     }
-
     @MessageMapping("/chat.send")
     @SendTo("/topic/public")
     fun sendMessage(@Payload chatMessage: ChatMessage): ChatMessage {
@@ -68,6 +67,7 @@ class ChatController {
                     return chatMessage
                 }
                 board.state = board.accept(key!!)
+                println("다음 state:${board.state}")
                 board.printScreen()
                 println(board)
                 println()

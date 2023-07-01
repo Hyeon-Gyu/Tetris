@@ -69,7 +69,7 @@ export class Tetris {
         Tetris.nBlockTypes = setOfBlockArrays.length;
         Tetris.nBlockDegrees = setOfBlockArrays[0].length;
         Tetris.setOfBlockObjects = Tetris.createSetOfBlocks(setOfBlockArrays);
-        Tetris.iScreenDw = Tetris.findLargestBlockSize(setOfBlockArrays);
+        //Tetris.iScreenDw = Tetris.findLargestBlockSize(setOfBlockArrays);
     }
     
 
@@ -118,6 +118,8 @@ export class Tetris {
         for(let y = nScanned - 1; y >= 0; y--){
             cy = top + y + nDeleted;
             line = screen.clip(cy,0,cy+1,screen.get_dx());
+            console.log("******",line.sum())
+            console.log("======================",screen.get_dx())
             if (line.sum() === screen.get_dx()) {
                 temp = screen.clip(0, 0, cy, screen.get_dx());
                 screen.paste(temp, 1, 0); 
@@ -208,6 +210,7 @@ export class Tetris {
 
     accept(key: string): TetrisState {
         let tempBlk:Matrix;
+        console.log("4")
         if(this.state === TetrisState.NewBlock){
             this.oScreen = this.deleteFullLines(this.oScreen, this.currBlk, this.top, this.iScreenDy, this.iScreenDx, Tetris.iScreenDw);
             this.iScreen.paste(this.oScreen, 0, 0);
@@ -217,7 +220,7 @@ export class Tetris {
             this.currBlk = Tetris.setOfBlockObjects[this.idxBlockType][this.idxBlockDegree];
             this.top = 0;
             this.left = Tetris.iScreenDw + this.iScreenDx / 2 - (this.currBlk.get_dx()+1) / 2;
-            this.left = Math.floor(this.left);
+            this.left = Math.floor(this.left+0.5);
             tempBlk = this.iScreen.clip(this.top, this.left, this.top+this.currBlk.get_dy(), this.left+this.currBlk.get_dx());
             tempBlk = tempBlk.add(this.currBlk);
             this.oScreen.paste(this.iScreen, 0, 0);
@@ -231,7 +234,19 @@ export class Tetris {
         switch(key){
             case 'a': this.left--; break;
             case 'd': this.left++; break;
-            case 's': this.top++; break;
+            case 's': 
+                this.top+=2; 
+                tempBlk = this.iScreen.clip(this.top, this.left, this.top+this.currBlk.get_dy(), this.left+this.currBlk.get_dx());
+                tempBlk = tempBlk.add(this.currBlk);
+                if (tempBlk.anyGreaterThan(1)) {
+                    this.state = TetrisState.NewBlock;
+                }
+
+                this.top -=1;
+
+                tempBlk = this.iScreen.clip(this.top, this.left, this.top+this.currBlk.get_dy(), this.left+this.currBlk.get_dx());
+                tempBlk = tempBlk.add(this.currBlk);
+                break;
             case 'w':
                 this.idxBlockDegree = (this.idxBlockDegree+1) % Tetris.nBlockDegrees;
                 this.currBlk = Tetris.setOfBlockObjects[this.idxBlockType][this.idxBlockDegree];
@@ -252,7 +267,7 @@ export class Tetris {
             switch(key) {
                 case 'a': this.left++; break; // undo: move right
                 case 'd': this.left--; break; // undo: move left
-                case 's': this.top--; this.state = TetrisState.NewBlock; break; // undo: move up
+                //case 's': this.top--; this.state = TetrisState.NewBlock; break; // undo: move up
                 case 'w': // undo: rotateCCW
                 this.idxBlockDegree = (this.idxBlockDegree+Tetris.nBlockDegrees-1)%Tetris.nBlockDegrees;
                 this.currBlk = Tetris.setOfBlockObjects[this.idxBlockType][this.idxBlockDegree];

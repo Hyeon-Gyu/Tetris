@@ -1,5 +1,5 @@
 {
-  "name": "onlyfront",
+  "name": "tetris",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -11,9 +11,11 @@
     "@types/node": "^16.7.13",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
-    "@types/stompjs": "^2.3.5",
+    "ajv": "^8.12.0",
+    "http-proxy-middleware": "^2.0.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-router-dom": "^6.14.0",
     "react-scripts": "5.0.1",
     "sockjs-client": "^1.6.1",
     "typescript": "^4.4.2",
@@ -46,5 +48,5 @@
   "devDependencies": {
     "@types/sockjs-client": "^1.5.1"
   },
-  "proxy" : "http://localhost:8080"
+  "proxy": "http://localhost:8080"
 }
