@@ -1,6 +1,6 @@
 ### 3인 대결 테트리스 구현
 23.01.13 ~23.04.26: 
-# <1인테트리스 로직 구현(+타이머 기능) & 테트리스 화면 UI 제작> [oneUser_Tetris]
+# 1인테트리스 로직 구현(+타이머 기능) & 테트리스 화면 UI 제작> [oneUser_Tetris]
 통신방법 : react(typescript), spring boot(kotlin)간  axios 비동기식 통신
 동작과정 : 1. web에서 keyboard 이벤트 발생
 	   2. json format에 key value 담아서 송신(front)
@@ -13,7 +13,9 @@
 기존 방식 변형 : 데이터 송수신 간 복잡성을 줄이기 위해 client, server 각각 client 인원수별 테트리스 게임판 객체  생성하여 
 userID, keyvalue 정보만 client들과 서버간 주고받고 각자 테트리스 로직진행. json format에 담길 데이터는 keyvalue와 ID 및 몇가지 flag를 담는것으로 구상중
 
-#튜토리얼 따라하기 [onlySpring(js,html)]
+
+
+# 튜토리얼 따라하기 [onlySpring(js,html)]
 < ~23.05.16: N명 입장할 수 있는 채팅방 구현(UI 제작X  CHROME확장 프로그램 이용) >
 목적 : 채팅방의 기능으로 서버에서 접속해있는 모든 client에게 동일한 값을 일괄적으로 전송하는 방식에 대해서 공부하기 위해서 
 1. N개 방 생성
