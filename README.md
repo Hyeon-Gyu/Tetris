@@ -46,7 +46,8 @@ userID, keyvalue 정보만 client들과 서버간 주고받고 각자 테트리�
 한계점: 타이머 미구현(React의 장점을 활용하며 타이머를 구현하기 어려웠다- 단순 하드코딩이 아닌 hook 기능활용하기에 완전한 react 활용지식이 부족함을 느낌)
 	데이터베이스 미연결(테트리스 초기 구상 당시, 한줄 삭제 마다 점수를 부여하여 데이터베이스에 사용자명과 점수를 활용해 랭킹을 저장하고자 했다 - 타이머 기능이 구현되어 있지 않아 대결이 성립되지 않았고, 랭킹제도를 추가할 필요성이 없어져 데이터베이스활용을 하지 않음)
 
-<img width="462" alt="tetris" src="https://github.com/hyeon-gyu/Tetris/assets/54972659/ede34c3c-3035-4cb9-a480-e103b9f4674b">
+
+<img width="657" alt="tetris" src="https://github.com/hyeon-gyu/Tetris/assets/54972659/ddadcc93-d526-457c-acdc-f82b862ded49">
 
 
 <img width="685" alt="tetris2" src="https://github.com/hyeon-gyu/Tetris/assets/54972659/dfce8351-3b08-4778-a44b-27b90a149d00">
